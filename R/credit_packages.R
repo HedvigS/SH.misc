@@ -26,7 +26,6 @@ credit_packages <- function(input_dir = NULL,
 r_fns <- list.files(path = input_dir, pattern = "*.[R|r]$", full.names = T, recursive = T)
 
 library(dplyr)
-source("list.functions.in.file_SH.R")
 # df to bind to
 df <- data.frame("packages" = as.character(),
                  "functions" = as.character(),
@@ -137,4 +136,30 @@ vec <- paste0("\\citet{", bibdf$BIBTEXKEY, "}")
 fPaste(vec)   %>%
   writeLines(con = paste0(output_dir, "/citation_keys.txt"))
 }
+}
+
+
+## Function taken from NCmisc, but removing unique()
+
+library(NCmisc)
+
+list.functions.in.file_SH <- function (filename, alphabetic = TRUE)
+{
+    if (!file.exists(filename)) {
+        stop("couldn't find file ", filename)
+    }
+    if (!get.ext(filename) == "R") {
+        warning("expecting *.R file, will try to proceed")
+    }
+    tmp <- getParseData(parse(filename, keep.source = TRUE))
+    nms <- tmp$text[which(tmp$token == "SYMBOL_FUNCTION_CALL")]
+    funs <- if (alphabetic) {
+        sort(nms)
+    }
+    else {
+        nms
+    }
+    src <- paste(as.vector(sapply(funs, find)))
+    outlist <- tapply(funs, factor(src), c)
+    return(outlist)
 }
