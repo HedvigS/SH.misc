@@ -142,7 +142,7 @@ used_packages
 }
 
 
-## Function taken from NCmisc, but removing unique()
+## Function taken from NCmisc, but removing unique() so that you get one line per function call.
 
 library(NCmisc)
 
