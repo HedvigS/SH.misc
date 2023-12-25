@@ -3,7 +3,8 @@ Title: Assorted functions for data science in linguistics
 Version: 0.0.0.9000
 Encoding: UTF-8
 Authors@R: c(
-    person("Siva", "Kalyan", , "EMAIL", role = c("aut")),
+    person("Siva", "Kalyan", , "sivak.au@gmail.com", role = c("aut"),
+           comment = c(ORCID = "0000-0002-6302-6641")),
     person("Hedvig", "Skirgård", , "hedvig.public@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-7748-2381")))
 
