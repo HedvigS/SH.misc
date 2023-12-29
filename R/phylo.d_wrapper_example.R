@@ -27,19 +27,20 @@ tips_cluster <- c(39, 9, 10, 11, 38, 36, 37, 17, 16, 15, 12, 14, 13, 35, 31, 30,
 df <- tree$tip.label %>%
   as.data.frame() %>%
   rename(tip.label = ".") %>%
-  mutate(singleton_outlier = ifelse(tip.label %in% tips_singleton_outlier, 0, 1),
-         singleton_middle = ifelse(tip.label %in% tips_singleton_middle, 0, 1),
-         sisters_a = ifelse(tip.label %in% tips_sisters_a, 0, 1),
-         sisters_b = ifelse(tip.label %in% tips_sisters_b, 0, 1),
-         sisters_c = ifelse(tip.label %in% tips_sisters_c, 0, 1),
-         triplets_a = ifelse(tip.label %in% tips_triplets_a, 0, 1),
-         triplets_b = ifelse(tip.label %in% tips_triplets_b, 0, 1),
-         triplets_c = ifelse(tip.label %in% tips_triplets_c, 0, 1),
-         quadruplets_a = ifelse(tip.label %in% tips_quadruplets_a, 0, 1),
-         quadruplets_b = ifelse(tip.label %in% tips_quadruplets_b, 0, 1),
-         quadruplets_c = ifelse(tip.label %in% tips_quadruplets_c, 0, 1),
-         cluster = ifelse(tip.label %in% tips_cluster, 0, 1)
-  )
+  mutate(singleton_outlier = !(tip.label %in% tips_singleton_outlier),
+         singleton_middle = !(tip.label %in% tips_singleton_middle),
+         sisters_a = !(tip.label %in% tips_sisters_a),
+         sisters_b = !(tip.label %in% tips_sisters_b),
+         sisters_c = !(tip.label %in% tips_sisters_c),
+         triplets_a = !(tip.label %in% tips_triplets_a),
+         triplets_b = !(tip.label %in% tips_triplets_b),
+         triplets_c = !(tip.label %in% tips_triplets_c),
+         quadruplets_a = !(tip.label %in% tips_quadruplets_a),
+         quadruplets_b = !(tip.label %in% tips_quadruplets_b),
+         quadruplets_c = !(tip.label %in% tips_quadruplets_c),
+         cluster = !(tip.label %in% tips_cluster)
+  ) %>% 
+  modify_if(is.logical, as.numeric)
 
 # making random versions of singleton, sister, triplet, quad and cluster distributions
 df$singleton_random <- sample(df$singleton_outlier)
@@ -51,4 +52,4 @@ df$cluster_random <- sample(df$cluster)
 #making comp ojbect
 comp_data <- caper::comparative.data(tree, df,names.col = "tip.label")
 
-phylo.d_wrapper(data = comp_data, binvar = "singleton_outlier")
+phylo.d_wrapper(data = comp_data, binvar = singleton_outlier)
