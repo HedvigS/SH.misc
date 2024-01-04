@@ -50,7 +50,7 @@ phylo.d_wrapper <- function(data, var.name, ...) {
         result$Pval1 < 0.05) {
         cat(
             paste0(
-                "Observed values are definitely on the Brownian/clumped end of the spectrum (pval0 > 0.05 & pval1 < 0.05)."
+                "Observed values are definitely on the Brownian/clumped end of the spectrum (pval0 > 0.05 & pval1 < 0.05).\n"
             )
         )
     }
@@ -58,7 +58,7 @@ phylo.d_wrapper <- function(data, var.name, ...) {
              result$Pval1 > 0.05) {
         cat(
             paste0(
-                "Observed values are definitely on the random/overdispersed end of the spectrum (pval0 < 0.05 & pval1 > 0.05)."
+                "Observed values are definitely on the random/overdispersed end of the spectrum (pval0 < 0.05 & pval1 > 0.05).\n"
             )
         )
     }
@@ -66,7 +66,7 @@ phylo.d_wrapper <- function(data, var.name, ...) {
              result$Pval1 < 0.05) {
         cat(
             paste0(
-                "Observed values are definitely between Brownian/clumped and random/over-dispersed (pval0 < 0.05 & pval1 < 0.05)"
+                "Observed values are definitely between Brownian/clumped and random/over-dispersed (pval0 < 0.05 & pval1 < 0.05).\n"
             )
         )
     }
