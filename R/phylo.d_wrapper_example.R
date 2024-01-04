@@ -52,4 +52,4 @@ df$cluster_random <- sample(df$cluster)
 #making comp ojbect
 comp_data <- caper::comparative.data(tree, df,names.col = "tip.label")
 
-phylo.d_wrapper(data = comp_data, binvar = singleton_outlier)
+phylo.d_wrapper(data = comp_data, var.name = "singleton_outlier")

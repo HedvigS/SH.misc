@@ -1,24 +1,30 @@
 #' Wrapped function to caper::phylo.d which performs some important sanity checks.
 #'
-#' @param data A list of the class "comparative.data". Created by caper::comparative.data
-#' @param binvar The name of the variable in `data` holding the binary variable of interest.
+#' @param data A list of the class "comparative.data". Created by `caper::comparative.data`.
+#' @param var.name The name of the variable in `data` holding the binary variable of interest.
+#' Unlike the `binvar` argument of `phylo.d`, this must be a string, rather than a symbol.
+#' @param ... Additional parameters passed to `phylo.d`.
 #' @returns If no error occurs, the function returns an object of class 'phylo.d' 
-#' just as caper::phylo.d. See ?caper::phylo.d for more details.
+#' just as `caper::phylo.d`. See `?caper::phylo.d` for more details.
 #' @example phylo.d_wrapper_example.R
 #' @export
 
-phylo.d_wrapper <- function(data, binvar) {
-  binvar_name <- deparse(substitute(binvar))
+phylo.d_wrapper <- function(data, var.name, ...) {
+  print(match.call())
+  if ("binvar" %in% names(match.call())) {
+    stop(paste0("Use the 'var.name' argument instead of 'binvar'. Note that 'var.name'\n",
+                "must be a string, not a symbol."))
+  }
   
   #  data <- comp_data
-  #  binvar_name = "cluster"
+  #  var.name = "cluster"
   
-  if (!(binvar_name %in% colnames(data$data))) {
-    stop(paste0("Cannot find a column named '", binvar_name, "' in the data.\n"))
+  if (!(var.name %in% colnames(data$data))) {
+    stop(paste0("Cannot find a column named '", var.name, "' in the data.\n"))
   }
   
   #count the proportion of the less frequent value in the column
-  min_prop <- data$data[[binvar_name]] %>%
+  min_prop <- data$data[[var.name]] %>%
     table() %>% `/`(sum(.)) %>% min()
   
   if (min_prop < 0.05) {
@@ -33,8 +39,8 @@ phylo.d_wrapper <- function(data, binvar) {
   
   result <-
     eval(substitute(
-      caper::phylo.d(data = comp_data, binvar = this_var),
-      list(this_var = as.name(binvar_name))
+      caper::phylo.d(data = data, binvar = this_var, ...),
+      list(this_var = as.name(var.name))
     ))
   
   if (result$Pval0 > 0.05 &
