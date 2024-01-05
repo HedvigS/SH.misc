@@ -11,7 +11,7 @@
 phylo.d_wrapper <- function(data, var.name, ...) {
     print(match.call())
     if ("binvar" %in% names(match.call())) {
-        stop(paste0("Use the 'var.name' argument instead of 'binvar'. Note that 'var.name' must be a string, not a symbol."))
+        stop("Use the 'var.name' argument instead of 'binvar'. Note that 'var.name' must be a string, not a symbol.")
     }
 
     if (!(var.name %in% colnames(data$data))) {
@@ -24,9 +24,7 @@ phylo.d_wrapper <- function(data, var.name, ...) {
 
     if (min_prop < 0.05) {
         stop(
-            paste0(
-                "The distribution of tips over the two binary values is too skewed; fewer than 5% of tips are in the minority state. Applying D-estimate calculation to such skewed data can generate unreliable results.\n"
-            )
+            "The distribution of tips over the two binary values is too skewed; fewer than 5% of tips are in the minority state. Applying D-estimate calculation to such skewed data can generate unreliable results.\n"
         )
     }
 
@@ -39,9 +37,7 @@ phylo.d_wrapper <- function(data, var.name, ...) {
     if (result$Pval0 > 0.05 &
         result$Pval1 > 0.05) {
         stop(
-            paste0(
-                "Brownian and random simulations are not sufficiently distinct from each other to provide a meaningful D-estimate; observed values appear to be explainable under either model (pval0 > 0.05 & pval1 > 0.05)."
-            )
+            "Brownian and random simulations are not sufficiently distinct from each other to provide a meaningful D-estimate; observed values appear to be explainable under either model (pval0 > 0.05 & pval1 > 0.05)."
         )
     }
 
@@ -49,25 +45,19 @@ phylo.d_wrapper <- function(data, var.name, ...) {
     if (result$Pval0 > 0.05 &
         result$Pval1 < 0.05) {
         cat(
-            paste0(
-                "Observed values are definitely on the Brownian/clumped end of the spectrum (pval0 > 0.05 & pval1 < 0.05).\n"
-            )
+            "Observed values are definitely on the Brownian/clumped end of the spectrum (pval0 > 0.05 & pval1 < 0.05).\n"
         )
     }
     else if (result$Pval0 < 0.05 &
              result$Pval1 > 0.05) {
         cat(
-            paste0(
-                "Observed values are definitely on the random/overdispersed end of the spectrum (pval0 < 0.05 & pval1 > 0.05).\n"
-            )
+            "Observed values are definitely on the random/overdispersed end of the spectrum (pval0 < 0.05 & pval1 > 0.05).\n"
         )
     }
     else if (result$Pval0 < 0.05 &
              result$Pval1 < 0.05) {
         cat(
-            paste0(
-                "Observed values are definitely between Brownian/clumped and random/over-dispersed (pval0 < 0.05 & pval1 < 0.05).\n"
-            )
+            "Observed values are definitely between Brownian/clumped and random/over-dispersed (pval0 < 0.05 & pval1 < 0.05).\n"
         )
     }
 
