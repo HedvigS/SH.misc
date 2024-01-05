@@ -2,7 +2,6 @@
 ## EXAMPLE
 library(tidyverse)
 library(caper)
-library(ape)
 
 set.seed(67)
 
@@ -55,11 +54,17 @@ comp_data <- caper::comparative.data(tree, df,names.col = "tip.label")
 phylo.d_wrapper(data = comp_data, var.name = "singleton_outlier")
 phylo.d_wrapper(data = comp_data, var.name = "cluster")
 
-##illustrating loop
 vars <- comp_data$data %>% colnames()
 
+##illustrating loop
 for(var in vars){
-cat(paste0("I'm on ", var, ".\n"))
-    try(phylo.d_wrapper(data = comp_data, var.name = var))
-
+  cat(paste0("I'm on ", var, ".\n"))
+  try(phylo.d_wrapper(data = comp_data, var.name = var))
+  
 }
+
+##illustrating purrr::map()
+map(vars, function(var) {
+  cat(paste0("I'm on ", var, ".\n"));
+  try(phylo.d_wrapper(data = comp_data, var.name = var))
+}) %>% invisible()

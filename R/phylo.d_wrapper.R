@@ -1,6 +1,6 @@
 #' Wrapped function to caper::phylo.d which performs some important sanity checks.
 #' @param data A list of the class "comparative.data". Created by `caper::comparative.data`.
-#' @param var.name Character vector. The name of the variable in `data` holding the binary variable of interest. This will be passed to phylo.d and matched to the argument "binvar". ' Unlike the `binvar` argument of `phylo.d`, this must be a string, rather than a symbol.
+#' @param var.name Character vector. The name of the variable in `data` holding the binary variable of interest. This will be passed to `phylo.d` and passed (as a symbol) to the argument `binvar`.
 #' @param ... Additional parameters passed to `phylo.d`.
 #' @author wrapper: Hedvig Skirgård and Siva Kalyan; original caper::phylo.d-function: Susanne Fritz and David Orme.
 #' @returns If no error occurs, the function returns an object of class 'phylo.d'
