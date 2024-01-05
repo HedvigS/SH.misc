@@ -2,7 +2,6 @@
 ## EXAMPLE
 library(tidyverse)
 library(caper)
-library(ape)
 
 set.seed(67)
 
@@ -39,7 +38,7 @@ df <- tree$tip.label %>%
          quadruplets_b = !(tip.label %in% tips_quadruplets_b),
          quadruplets_c = !(tip.label %in% tips_quadruplets_c),
          cluster = !(tip.label %in% tips_cluster)
-  ) %>% 
+  ) %>%
   modify_if(is.logical, as.numeric)
 
 # making random versions of singleton, sister, triplet, quad and cluster distributions
@@ -53,3 +52,19 @@ df$cluster_random <- sample(df$cluster)
 comp_data <- caper::comparative.data(tree, df,names.col = "tip.label")
 
 phylo.d_wrapper(data = comp_data, var.name = "singleton_outlier")
+phylo.d_wrapper(data = comp_data, var.name = "cluster")
+
+vars <- comp_data$data %>% colnames()
+
+##illustrating loop
+for(var in vars){
+  cat(paste0("I'm on ", var, ".\n"))
+  try(phylo.d_wrapper(data = comp_data, var.name = var))
+  
+}
+
+##illustrating purrr::map()
+map(vars, function(var) {
+  cat(paste0("I'm on ", var, ".\n"));
+  try(phylo.d_wrapper(data = comp_data, var.name = var))
+}) %>% invisible()
