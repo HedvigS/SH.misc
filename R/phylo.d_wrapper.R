@@ -4,7 +4,7 @@
 #' @param var.name Character vector. The name of the variable in `data` holding the binary variable of interest. This will be passed to `phylo.d` and passed (as a symbol) to the argument `binvar`.
 #' @param ... Additional parameters passed to `phylo.d`.
 #' @author wrapper: Hedvig Skirgård and Siva Kalyan; original caper::phylo.d-function: Susanne Fritz and David Orme.
-#' @returns If no error occurs, the function returns an object of class 'phylo.d'
+#' @return If no error occurs, the function returns an object of class 'phylo.d'
 #' just as `caper::phylo.d`. See `?caper::phylo.d` for more details. If the wrapper-function finds problem, it will trigger error messages.
 #' @example phylo.d_wrapper_example.R
 #' @export
