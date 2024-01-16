@@ -1,4 +1,5 @@
 #' Wrapped function to caper::phylo.d which performs some important sanity checks.
+#'
 #' @param data A list of the class "comparative.data". Created by `caper::comparative.data`.
 #' @param var.name Character vector. The name of the variable in `data` holding the binary variable of interest. This will be passed to `phylo.d` and passed (as a symbol) to the argument `binvar`.
 #' @param ... Additional parameters passed to `phylo.d`.
@@ -7,6 +8,7 @@
 #' just as `caper::phylo.d`. See `?caper::phylo.d` for more details. If the wrapper-function finds problem, it will trigger error messages.
 #' @example phylo.d_wrapper_example.R
 #' @export
+#'
 
 phylo.d_wrapper <- function(data, var.name, ...) {
     print(match.call())
