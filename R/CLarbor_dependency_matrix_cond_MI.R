@@ -1,7 +1,20 @@
+#' Creates the complete dependency graph of the features, optionally taking into account groupings of observations
+#' @param value_df data-frame
+#' @param external_variables_df description
+#' @author Siva Kalyan and Hedvig Skirgård
+#' @value
+#' @note We would like to thank Harald Hammarström for his invaluable guidance and support in the creation of these functions. See Hammarström, H., & O’Connor, L. (2013). Dependency-sensitive typological distance. In Approaches to measuring linguistic differences. De Gruyter.
+
+#' @export
+
+
+
 ##this script defines functions that create an asymmetrical dependency matrix.
 ##The dependency is measured as the conditional mutual information of 2 traits
 ##divided by the conditional entropy of one of those traits.
 ##If all the observations for 2 traits are the same (or the same and the rest missing), the dependency will be zero
+
+
 
 dependency_matrix_cond_MI <- function(value_df, external_variables_df = tibble(rowname = value_df[[1]], external_variables_united = "null")){
   #This function expects 2 dataframes, one with the observations as rows and traits as columns
