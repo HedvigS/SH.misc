@@ -3,10 +3,11 @@
 #' @param input_dir character vector. Name of directory of R-scripts. Will be serched downwards recursively, i.e. also go through sub-directories.
 #' @param output_dir character vector. Name of directory to print bibTeX file and citation-keys. Necessary if print_bibtex == TRUE and/or print_tex_citation_string == TRUE.
 #' @param print_bibtex logical. If TRUE, a bibTeX file is written with entries for the packages found to be used. File will be written to output_dir as "used_pkgs.bib"
-#' @param print_tex_citation_string logical. If TRUE, a txt-file will be written with a string of all the TeX citation keys in a string. This txt-file can be included in a TeX documnet with "\\input{}". It will be in output_dir with the name "citation_keys.txt".
+#' @param print_tex_citation_string logical. If TRUE, a txt-file will be written with a string of all the TeX citation keys in a string. This txt-file can be included in a TeX document with "\\input{}". It will be in output_dir with the name "citation_keys.txt".
 #' @param compare_loaded_with_used logical. If TRUE, the set of packages that the scripts used are compared to those loaded currently in the environment and reported in terminal.
-#' @param report_most_used_pkgs logical. If TRUE, the function will report which are the 5 packages you use the most functions from
-#' @param report_script_with_most_funs logical. If TRUE, the function will report which script has the most function calls.
+#' @param report_most_used_pkgs logical. If TRUE, the function will report which are the 5 packages you use the most functions from to the terminal.
+#' @param report_script_with_most_funs logical. If TRUE, the function will report which script has the most function calls to the terminal.
+#' @param verbose logical. If TRUE, the function will be more talkative.
 #' @return Data-frame of all used functions. Depending on the arguments, the function also returns output to the terminal and/or files written to the output directory.
 #' @note In cases where it is not clear which specific package a function is from several packages are returned for that function. This is for example the case with filter().
 #' @export
@@ -141,7 +142,7 @@ used_packages
 }
 
 
-## Function taken from NCmisc, but removing unique()
+## Function taken from NCmisc, but removing unique() so that you get one line per function call.
 
 library(NCmisc)
 
