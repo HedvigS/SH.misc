@@ -13,9 +13,10 @@ License: Apache License (>= 2)
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Depends:
-    dplyr
-    magrittr
-
+    	dplyr
+	magrittr
+	optrees
+	infotheo        furrr        fields        igraph,        cluster         ape        entropy         knitr        MASS         glue        reshape2
 Imports:
     caper,
     Ape
