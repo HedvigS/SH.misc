@@ -17,7 +17,7 @@
 ##If all the observations for 2 traits are the same (or the same and the rest missing), the dependency will be zero
 
 
-tst <- dependency_matrix_cond_MI(value_df = value_df)
+#tst <- dependency_matrix_cond_MI(value_df = value_df)
 
 
 dependency_matrix_cond_MI <- function(value_df, external_variables_df = tibble(rowname = value_df[[1]], external_variables_united = "null")){
