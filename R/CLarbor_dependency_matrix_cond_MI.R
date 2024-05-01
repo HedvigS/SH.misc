@@ -1,12 +1,14 @@
 #' Creates the complete dependency graph of the features, optionally taking into account groupings of observations
-#' @param value_df data-frame
-#' @param external_variables_df description
+#' @param value_df data-frame where the rows are observations and the columns features. The first column needs to contain a unique identified for each observation. The name of the first column is irrelevant.
+#' @param external_variables_df data-frame where the rows are observations and the columns contain meta-data on the observations, such as regions, families etc that group the observations meaningfully. The first column needs to contain a unique identified for each observation. The name of the first column is irrelevant.
 #' @author Siva Kalyan and Hedvig Skirgård
 #' @value
 #' @note We would like to thank Harald Hammarström for his invaluable guidance and support in the creation of these functions. See Hammarström, H., & O’Connor, L. (2013). Dependency-sensitive typological distance. In Approaches to measuring linguistic differences. De Gruyter.
 
 #' @export
 
+#library(infotheo)
+#value_df <- read_tsv("../tests/test_that/fixtures/Sahul_structure_wide.tsv")
 
 
 ##this script defines functions that create an asymmetrical dependency matrix.
@@ -14,6 +16,8 @@
 ##divided by the conditional entropy of one of those traits.
 ##If all the observations for 2 traits are the same (or the same and the rest missing), the dependency will be zero
 
+
+tst <- dependency_matrix_cond_MI(value_df = value_df)
 
 
 dependency_matrix_cond_MI <- function(value_df, external_variables_df = tibble(rowname = value_df[[1]], external_variables_united = "null")){
@@ -67,7 +71,7 @@ dependency_matrix_cond_MI <- function(value_df, external_variables_df = tibble(r
 
   dfs_joined <- external_variables_df_for_depfun %>%
     rownames_to_column("ID") %>%
-    full_join(value_df_for_depfun)
+    full_join(value_df_for_depfun,  by = "ID")
 
   #This function computes the dependency between two features given the external variables,
   #and only for combinations of trait observations where there isn't missing data.
@@ -78,7 +82,7 @@ dependency_matrix_cond_MI <- function(value_df, external_variables_df = tibble(r
       d <- dfs_joined %>%
         dplyr::select(Var1 = x, Var2 = y, external_variables_united) %>%
         drop_na()
-      condinformation(d$Var1, d$Var2, d$external_variables_united)/condentropy(d$Var2, d$external_variables_united)
+      infotheo::condinformation(d$Var1, d$Var2, d$external_variables_united)/condentropy(d$Var2, d$external_variables_united)
     }
   }
 
