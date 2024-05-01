@@ -1,6 +1,6 @@
 #' Creates the complete dependency graph of the features, optionally taking into account groupings of observations
 #' @param value_df data-frame where the rows are observations and the columns features. The first column needs to contain a unique identified for each observation. The name of the first column is irrelevant.
-#' @param external_variables_df data-frame where the rows are observations and the columns contain meta-data on the observations, such as regions, families etc that group the observations meaningfully. The first column needs to contain a unique identified for each observation. The name of the first column is irrelevant.
+#' @param obs_group_df data-frame where the rows are observations and the columns contain meta-data on the observations, such as regions, families etc that group the observations meaningfully. The first column needs to contain a unique identified for each observation. The name of the first column is irrelevant.
 #' @author Siva Kalyan and Hedvig Skirgård
 #' @value
 #' @note We would like to thank Harald Hammarström for his invaluable guidance and support in the creation of these functions. See Hammarström, H., & O’Connor, L. (2013). Dependency-sensitive typological distance. In Approaches to measuring linguistic differences. De Gruyter.
@@ -20,7 +20,7 @@
 #tst <- dependency_matrix_cond_MI(value_df = value_df)
 
 
-dependency_matrix_cond_MI <- function(value_df, external_variables_df = tibble(rowname = value_df[[1]], external_variables_united = "null")){
+dependency_matrix_cond_MI <- function(value_df, obs_group_df = tibble(rowname = value_df[[1]], external_variables_united = "null")){
   #This function expects 2 dataframes, one with the observations as rows and traits as columns
   #and the ID for the observations as the first column on the df,
   #the second df should also have the exact same IDs as the first df in the first column,
@@ -30,7 +30,7 @@ dependency_matrix_cond_MI <- function(value_df, external_variables_df = tibble(r
   #this package contains the functions for computing conditional mutual information and entropy
 
   #Check if there are any observations that have missing IDs.
-  if (sum(is.na(external_variables_df)) > 0) {
+  if (sum(is.na(obs_group_df)) > 0) {
     stop("There is missing data in your dataframe for external variables. Please make sure that all rows have complete entries.")
   }
 
@@ -41,12 +41,12 @@ dependency_matrix_cond_MI <- function(value_df, external_variables_df = tibble(r
   }
 
   #Check if the observation IDs in both dataframes are the same
-  if (!all(value_df[,1] == external_variables_df[,1])){
+  if (!all(value_df[,1] == obs_group_df[,1])){
     stop("External variables IDs and value IDs are not the same! Please recheck.")
   }
 
   #Comibine all the columns with external variables into one column
-  external_variables_df_united <- external_variables_df %>%
+  obs_group_df_united <- obs_group_df %>%
     unite("external_variables_united", -1)
 
   #All the values in both dfs need to be factors, not characters, numbers or other types.
@@ -63,13 +63,13 @@ dependency_matrix_cond_MI <- function(value_df, external_variables_df = tibble(r
   value_df_for_depfun <- make_features_factors(value_df) %>%
     rownames_to_column("ID")
 
-  external_variables_df_for_depfun <- make_features_factors(external_variables_df_united)
+  obs_group_df_for_depfun <- make_features_factors(obs_group_df_united)
 
   #For the functions later, we need to store the names of the traits
   #in a separate vector and combine the dataframes
   value_vars <- colnames(value_df_for_depfun)[-1]
 
-  dfs_joined <- external_variables_df_for_depfun %>%
+  dfs_joined <- obs_group_df_for_depfun %>%
     rownames_to_column("ID") %>%
     full_join(value_df_for_depfun,  by = "ID")
 
