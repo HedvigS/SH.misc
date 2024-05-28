@@ -2,6 +2,7 @@
 #' @param url character vector. URL string, e..g "https://zenodo.org/record/7740822/files/grambank/grambank-analysed-v1.0.zip"
 #' @param exdir character vector. name of folder where the files are to be written to
 #' @param drop_dir_level logical. If FALSE, a dir will exist inside the exdir that bears the name from the zip-file from Zenodo. If TRUE, this dir-evel will be removed, the contents of the zipped-file will be placed directly in exdir.
+#' @importFrom fs dir_copy
 #' @author Hedvig Skirgård
 #' @export
 
