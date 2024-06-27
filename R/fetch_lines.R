@@ -10,6 +10,7 @@
 #' # fetch_lines(url = "https://github.com/HedvigS/R_grambank_cookbook/raw/main/functions/make_theo_scores.R", out_dir = ".")
 #'
 #' @export
+#'
 
 fetch_lines <- function(url = NULL,
                        out_dir = NULL,
