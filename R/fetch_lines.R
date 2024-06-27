@@ -21,7 +21,7 @@ fetch_lines <- function(url = NULL,
 out_fn <- file.path(out_dir, basename(url))
 
 if(file.exists(out_fn) & overwrite == FALSE) {
-  warning("File already exists. Delete file or set `overwrite` to TRUE if you want to fetch again.")
+  message("File already exists. Delete file or set `overwrite` to TRUE if you want to fetch again.")
 }
 
 lines <- readLines(url, warn = F)
