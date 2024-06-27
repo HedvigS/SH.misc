@@ -1,32 +1,60 @@
-#' Takes a vector of filenames, reads in (assuming tsv) and stackrs them all on top of each other, aligning columns where they have the same name. Unique columns are kept.
+#' Stacks content of multiple tsv-files on-top of each other.
 #'
-#' @param make_all_charinput_dir logical. Unless specified, all columns will be treated as character vectors
-#' @param fn_col_basename logical. If set to TRUE, the column with filenames will be basename. If FALSE, the full relative filepath will be used.
-#' @return Data-frame with all tables stacked.
-#' @export
-#'
+#' @param dir character vector. file.path to directory the function is to search in.
+#' @param pattern character vector. Optional, if specified the function will only deal with the tsvs:s that match the pattern. Do not specify "tsv", that is already specified.
+#' @param recursive logical. If TRUE, tsvs in dirs inside the dir specified will also be matched.
+#' @param range numeric vector specifying a range to limit the vector of file-names to read in by. Default is NULL, i.e. all files are read in. Sometimes if can be desirable to subset the files to test, if so the range can be set to c(1:10) for the first 10 files.
+#' @param verbose logical. If TRUE, function will report on which file it is at etc.
+#' @return data-frame with content of all tsvs stacked and a column with filename. 
+#' @note All content will be turned into character to facilitate joining and then the col-types will be converted back to appropriate class for the whole data-frame.
+#' @author Hedvig Skirgård.
+#' @import dplyr
+#' @import purrr
+#' @import data.table
+#' @import readr
+#' 
 
-stack_tsvs <- function(fns = NULL, make_all_char = TRUE, fn_col_basename = FALSE){
+#dir = "../../Glottobank/Grambank/original_sheets/"
 
-df <- fns %>%
-  map_df(
-    function(x) data.table::fread(x ,
-                                  encoding = 'UTF-8', header = TRUE,
-                                  fill = TRUE, blank.lines.skip = TRUE,
-                                  sep = "\t", na.strings = "",
-    )   %>%
-    mutate(across(everything(), as.character)) %>%
-        mutate(filename = x)
-    )
+stack_tsvs <- function(dir = NULL, 
+                       pattern = NULL, 
+                       recursive = FALSE, 
+                       range = NULL, 
+                       verbose= TRUE){
 
-    if(make_all_char == FALSE){
-    df <- type_convert(df)
+
+  fns <- list.files(path = dir, pattern = paste0(pattern, ".*tsv$"), full.names = T, recursive = recursive)
+
+  if(!is.null(range)){
+    fns <-   fns[range]
     }
+  
+  if(verbose == TRUE){
+    cat("I'm reading in ", length(fns), " files.\n"
+      , sep = "")
+    
+      }
 
-    if(fn_col_basename == TRUE){
-    df$filename <- basename(df$filename)
-    }
+read_for_map_df <- function(x){ 
+  if(verbose == TRUE){
+  cat("I'm at file ", x, ".\n")
+  }
+  df <- data.table::fread(x ,
+                                encoding = 'UTF-8', header = TRUE, 
+                                fill = TRUE, blank.lines.skip = TRUE,
+                                sep = "\t", na.strings = "",
+  )   %>% 
+      dplyr::mutate(across(everything(), as.character)) %>% 
+      dplyr::mutate(filename =x)
+    df
+  }  
+  
+  All_raw <-    purrr::map_df(.x = fns, .f = read_for_map_df)
+  
+All_raw <- suppressMessages(readr::type_convert(All_raw, trim_ws = TRUE, guess_integer = FALSE))
+  
 
-
-df
+All_raw  
 }
+
+library(tidyverse)

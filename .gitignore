@@ -4,3 +4,5 @@
 .Ruserdata
 **.DS_Store
 **R.Rproj
+.Rbuildignore
+SH.misc.Rproj
