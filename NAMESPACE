@@ -1,2 +1,4 @@
 export(credit_packages)
 export(phylo.d_wrapper)
+export(fetch_lines)
+export(stack_tsvs)
