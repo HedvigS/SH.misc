@@ -1,9 +1,12 @@
 #' Prunes a tree down to just the tips that are specified. If the specified labels belong to node-labels, all tips below the node are pruned away until the node becomes a tip.
 #'
 #' @param tree phylo-class object
-#' #' @param tips_and_nodes_to_keep character vector of tips and/or node labels that are to be kept
+#' @param tips_and_nodes_to_keep character vector of tips and/or node labels that are to be kept
 #' @import ape
 #' @import dplyr
+#' @author Hedvig Skirgård
+#' @note These function was written to solve a specific problem. The functions are written perhaps a bit unusually, with tidyverse pipes and data.frames where more "elegant" base-solutions are available. This function was written for specific use cases I have encountered. If you find them useful and would like them to be improved in terms of functionality, elegance and/or speed let me know. For another take on this problem, see Erich Round's solution here: https://github.com/erichround/glottoTrees/blob/99338ff3e62fa3f282eb19ed55a60c564fd843bc/R/topology.R#L326
+
 # This script defines two functions and at the end demonstrate them with some example data. The goal is to reduce a tree to a set of tips specified in a list. However, this list includes internal nodes and tips, so ape::drop/keep.tip can't be used.
 
 # The first function, ".fun_Descendants_node_labels", is a wrapped for phangorn::Descendants(). The change here is that the original function only takes node numbers for the argument node. It is often desirable to instead be able to perform this kind of operation but with node labels. This new function takes in node labels, looks up their node numbers, passes that to phangorn::Descendants(), takes the output (which is tip numbers) and looks up the labels for them. This functions outputs a flat vector, not a nested set of lists like phangorn::Descendants().
@@ -13,7 +16,6 @@
 # The second function needs the first function to work.
 
 ## DISCLAIMER
-# These functions were written to solve a specific problem. The functions are written perhaps a bit unusually, with tidyverse pipes and data.frames where more "elegant" base-solutions are available. This function was written for specific use cases I have encountered. If you find them useful and would like them to be improved in terms of functionality, elegance and/or speed let me know. For another take on this problem, see Erich Round's solution here: https://github.com/erichround/glottoTrees/blob/99338ff3e62fa3f282eb19ed55a60c564fd843bc/R/topology.R#L326
 
 #######FUNCTIONS
 
@@ -62,7 +64,8 @@ descendants_tips_labels
 #### FUN 2
 
 # modification to keep.tip such that you can also specify internal nodes. All descendants of internal nodes are dropped and the internal node becomes a tip.
-keep_as_tip<- function(tree, tips_and_nodes_to_keep){
+keep_as_tip<- function(tree = NULL,
+                       tips_and_nodes_to_keep = NULL){
 
 #for bug running example
 #  tree <- clade_tree
