@@ -5,6 +5,7 @@
 #' @import ape
 #' @import dplyr
 #' @author Hedvig Skirgård
+#' @export
 #' @note These function was written to solve a specific problem. The functions are written perhaps a bit unusually, with tidyverse pipes and data.frames where more "elegant" base-solutions are available. This function was written for specific use cases I have encountered. If you find them useful and would like them to be improved in terms of functionality, elegance and/or speed let me know. For another take on this problem, see Erich Round's solution here: https://github.com/erichround/glottoTrees/blob/99338ff3e62fa3f282eb19ed55a60c564fd843bc/R/topology.R#L326
 
 # This script defines two functions and at the end demonstrate them with some example data. The goal is to reduce a tree to a set of tips specified in a list. However, this list includes internal nodes and tips, so ape::drop/keep.tip can't be used.
