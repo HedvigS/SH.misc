@@ -16,6 +16,7 @@
 #' @import magrittr
 #' @import tidyr
 #' @import naniar
+#' @import reader
 #' @import xtable
 #' @note In cases where it is not clear which specific package a function is from several packages are returned for that function. This is for example the case with filter().
 #' @export
@@ -249,7 +250,7 @@ if(verbose == TRUE){
     if (!file.exists(filename)) {
         stop("couldn't find file ", filename)
     }
-    if (!get.ext(filename) == "R") {
+    if (!reader::get.ext(filename) == "R") {
         warning("expecting *.R file, will try to proceed")
     }
     tmp <- getParseData(parse(filename, keep.source = TRUE))
