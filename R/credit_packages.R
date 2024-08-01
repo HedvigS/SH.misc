@@ -1,7 +1,7 @@
 #' Lists used packages in a set of R-script and generates citation keys.
 #'
-#' @param fns character vector of file-names to read in.
-#' @param pkgs_vec character vector. Names of R-packages, either instead of fns or in addition to it. Sometimes some packages are missed when searching through the scripts, if you add their names here they'll be included in the output.
+#' @param fns character vector of file-names to R-scripts to read in.
+#' @param extra_pkgs character vector. Names of R-packages, either instead of fns or in addition to it. Sometimes some packages are missed when searching through the scripts, if you add their names here they'll be included in the output despite this.
 #' @param output_dir character vector. Name of directory to print bibTeX file and citation-keys. Necessary if print_bibTeX == TRUE and/or print_tex_citation_string == TRUE.
 #' @param print_bibTeX logical. If TRUE, a bibTeX file is written with entries for the packages found to be used. File will be written to output_dir as "used_pkgs.bib"
 #' @param print_LaTeX_table logical. If TRUE, a LaTeX table will be rendered with each pagkage as a row and a column for version loaded.
@@ -12,17 +12,17 @@
 #' @param report_script_with_most_funs logical. If TRUE, the function will report which script has the most function calls to the terminal.
 #' @param verbose logical. If TRUE, the function will be more talkative.
 #' @return Data-frame of all used functions. Depending on the arguments, the function also returns output to the terminal and/or files written to the output directory.
+#' @author Hedvig Skirgård 
 #' @import dplyr
 #' @import magrittr
 #' @import tidyr
-#' @import naniar
-#' @import reader
+#' @importFrom get.ext reader
 #' @import xtable
-#' @note In cases where it is not clear which specific package a function is from several packages are returned for that function. This is for example the case with filter().
+#' @note In cases where it is not clear which specific package a function is from several packages are returned for that function. This can for example be the case with filter(). This function uses an adapted version of 'list.functions.in.file' from the package NC.misc. That function was written by Nicholas Cooper 'njcooper (at) gmx.co.uk'. The adjustment consist of removing unique() such that all instances are reported.
 #' @export
 #'
 credit_packages <- function(fns = NULL,
-                            pkgs_vec = NULL,
+                            extra_pkgs = NULL,
                             output_dir = NULL,
                             print_bibTeX = TRUE,
                             print_tex_citation_string = TRUE,
@@ -36,14 +36,14 @@ credit_packages <- function(fns = NULL,
 
 #fns <- list.files(path = "../../../Nextcloud/Hedvigs_academia/2024/emergent_interface/Emergent_interface_Hedvig/", pattern = "*.[R|r]$", full.names = T, recursive = F)
 #    output_dir = "."
-#    pkgs_vec = NULL
+#    extra_pkgs = NULL
 # verbose = TRUE
 #  compare_loaded_with_used = TRUE
   #  report_most_used_pkgs = TRUE
 #  report_script_with_most_funs = TRUE
    
-if(all(is.null(fns), is.null(pkgs_vec))){
-    stop("Neither fns nor pkgs_vec has been supplied.")
+if(all(is.null(fns), is.null(extra_pkgs))){
+    stop("Neither fns nor extra_pkgs has been supplied.")
 }
 
     if(is.null(output_dir)){
@@ -87,13 +87,13 @@ used_packages <- df %>%
   filter(!is.na(packages) ) 
   
 
-# dealing with instances where a package wasn't found. in pipe above this was listed as "" but it should be a proper NA
-used_packages <- naniar::replace_with_na(data = used_packages, replace= list(packages = ""))
+# removing instances where a package wasn't found
 used_packages$packages <- trimws(used_packages$packages)
 
 used_packages <- used_packages %>%
     dplyr::filter(packages != ".GlobalEnv") %>%
-    dplyr::filter(!is.na(packages))
+    dplyr::filter(!is.na(packages)| 
+                    packages != "")
 
 #df with loaded packages
 if(compare_loaded_with_used == TRUE){
@@ -106,12 +106,12 @@ joined_df <- dplyr::full_join(used_packages, loaded_packages, by = "packages")
 unused_but_loaded <- joined_df %>%
     dplyr::filter(is.na(used)) %>%
     dplyr::filter(!is.na(loaded)) %>%
-    dplyr::distinct(packages)
+    dplyr::distinct(packages) %>% .[,1] %>% as.vector()
 
-cat("There are ", nrow(unused_but_loaded), "packages that it seems like you're not using, but that are loaded.\n They are: ", unused_but_loaded$packages, ".\n" )
+warning("There are packages that it seems like you're not using, but that are still loaded in the environment.\n
+        They are: \n ", unused_but_loaded, "\n If you don't want to check this, set 'compare_loaded_with_used' to FALSE.\n\n" )
 
 }
-
 
 if(report_most_used_pkgs  == TRUE){
 
@@ -139,25 +139,25 @@ script_with_most_functions [1:5,])
     }
 
 
-if("" %in% df$packages){
+if("" %in% df$packages & verbose == TRUE){
 
   not_matched <-   df %>% 
     filter(packages == ""|is.na(packages)) %>% 
     distinct(functions) %>% .[,1] %>% as.vector()
   
-  warning("There were some functions that couldn't be matched to packages. This could be because the package isn't loaded in this session. Run requirements.R or similar and run the function again. Another possible cause is that the functions don't belong to packages at all but were defined elsewhere. The functions that cannot be matched to packages are: ", not_matched)
+  warning("There were some functions that couldn't be matched to packages. This could be because the package isn't loaded in this session. Run requirements.R or similar and run the function again. Another possible cause is that the functions don't belong to packages at all but were defined elsewhere. The functions that cannot be matched to packages are:.\n ", not_matched, "\n\n" )
   
   
   } 
   
-      if(is.null(fns) & !is.null(pkgs_vec)){
-        pkgs_to_cite <- pkgs_vec %>% unique()
+      if(is.null(fns) & !is.null(extra_pkgs)){
+        pkgs_to_cite <- extra_pkgs %>% unique()
             }
-    if(!is.null(fns) & !is.null(pkgs_vec)){
-        pkgs_to_cite <- unique(c(used_packages$packages, pkgs_vec))
+    if(!is.null(fns) & !is.null(extra_pkgs)){
+        pkgs_to_cite <- unique(c(used_packages$packages, extra_pkgs))
     }
 
-    if(!is.null(fns) & is.null(pkgs_vec)){
+    if(!is.null(fns) & is.null(extra_pkgs)){
         pkgs_to_cite <- unique(c(used_packages$packages))
     }
 
@@ -279,8 +279,5 @@ if(verbose == TRUE){
     outlist <- tapply(funs, factor(src), c)
     return(outlist)
 }
-
-
-credit_packages(fns = fns <- list.files(path = "../../../Nextcloud/Hedvigs_academia/2024/emergent_interface/Emergent_interface_Hedvig/", pattern = "*.[R|r]$", full.names = T, recursive = F), output_dir = ".")
 
 
