@@ -5,7 +5,7 @@
 #' @param output_dir character vector. Name of directory to print bibTeX file and citation-keys. Necessary if print_bibTeX == TRUE and/or print_tex_citation_string == TRUE.
 #' @param print_bibTeX logical. If TRUE, a bibTeX file is written with entries for the packages found to be used. File will be written to output_dir as "used_pkgs.bib"
 #' @param print_LaTeX_table logical. If TRUE, a LaTeX table will be rendered with each pagkage as a row and a column for version loaded.
-#' @param print_df logical. If TRUE, a table of packages will be printed to a tsv-file in the output_dir, with a column for version loaded.
+#' @param print_tsv logical. If TRUE, a table of packages will be printed to a tsv-file in the output_dir, with a column for version loaded.
 #' @param print_tex_citation_string logical. If TRUE, a txt-file will be written with a string of all the TeX citation keys in a string. This txt-file can be included in a TeX document with "\\input{}". It will be in output_dir with the name "citation_keys.txt".
 #' @param compare_loaded_with_used logical. If TRUE, the set of packages that the scripts used are compared to those loaded currently in the environment and reported in terminal.
 #' @param report_most_used_pkgs logical. If TRUE, the function will report which are the 5 packages you use the most functions from to the terminal.
@@ -29,7 +29,7 @@ credit_packages <- function(fns = NULL,
                             compare_loaded_with_used = TRUE,
                             report_most_used_pkgs = TRUE,
                             print_LaTeX_table = TRUE,
-                            print_df = TRUE,
+                            print_tsv = TRUE,
                             report_script_with_most_funs = TRUE,
                             verbose = TRUE
                             ){
@@ -178,7 +178,7 @@ readLines(output_fn) %>%
 ##adding in citation for R itself
 
 #https://stackoverflow.com/questions/46179997/r-missing-bib-key-in-citation-output
-R_bib = citation()
+R_bib = utils::citation(package = "base")
 R_bib$key = paste0("R_", R.version$major, ".", R.version$minor)
 R_bib$note <- R.version.string
 R_bib_string <- utils::toBibtex(R_bib)
@@ -219,10 +219,10 @@ if(verbose == TRUE){
 
     pkgs_to_cite_df <- installed.packages()[pkgs_to_cite, "Version"] %>%
         as.data.frame() %>%
-        rownames_to_column("Package") %>%
-        rename("Version" = "." )
+        tibble::rownames_to_column("Package") %>%
+        dplyr::rename("Version" = "." )
 
-    if(print_df == TRUE ){
+    if(print_tsv == TRUE ){
     pkgs_to_cite_df %>%
         write_tsv(paste0(output_dir,"/pkgs_versions_table.tsv"))
 
@@ -283,5 +283,5 @@ if(verbose == TRUE){
 }
 
 
-#credit_packages(fns = fns <- list.files(path = "../../../Nextcloud/Hedvigs_academia/2024/emergent_interface/Emergent_interface_Hedvig/", pattern = "*.[R|r]$", full.names = T, recursive = F), output_dir = ".")
+#credit_packages(fns = fns <- list.files(path = "../../../Nextcloud/Hedvigs_academia/2024/emergent_interface/Emergent_interface_Hedvig/", pattern = "*.[R|r]$", full.names = T, recursive = F), output_dir = "../../../Nextcloud/Hedvigs_academia/2024/emergent_interface/Emergent_interface_Hedvig/output/package_versions/")
 
