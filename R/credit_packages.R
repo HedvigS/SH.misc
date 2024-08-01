@@ -48,7 +48,9 @@ if(all(is.null(fns), is.null(extra_pkgs))){
 
     if(is.null(output_dir)){
         stop("output_dir not supplied.")
-    }
+    }else{
+          if(!dir.exists(output_dir)){dir.create(output_dir)}
+      }
 
     if(!is.null(fns)){
 
@@ -280,4 +282,6 @@ if(verbose == TRUE){
     return(outlist)
 }
 
+
+#credit_packages(fns = fns <- list.files(path = "../../../Nextcloud/Hedvigs_academia/2024/emergent_interface/Emergent_interface_Hedvig/", pattern = "*.[R|r]$", full.names = T, recursive = F), output_dir = ".")
 
