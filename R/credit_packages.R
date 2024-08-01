@@ -1,7 +1,7 @@
 #' Lists used packages in a set of R-script and generates citation keys.
 #'
-#' @param input_dir character vector. Name of directory of R-scripts. Will be serched downwards recursively, i.e. also go through sub-directories.
-#' @param pkgs_vec character vector. Names of R-packages, either instead of input_dir or in addition. Sometimes some packages aren't missed when searching through the scripts, if you add their names here they'll be included in the output.
+#' @param fns character vector of file-names to read in.
+#' @param pkgs_vec character vector. Names of R-packages, either instead of fns or in addition to it. Sometimes some packages are missed when searching through the scripts, if you add their names here they'll be included in the output.
 #' @param output_dir character vector. Name of directory to print bibTeX file and citation-keys. Necessary if print_bibTeX == TRUE and/or print_tex_citation_string == TRUE.
 #' @param print_bibTeX logical. If TRUE, a bibTeX file is written with entries for the packages found to be used. File will be written to output_dir as "used_pkgs.bib"
 #' @param print_LaTeX_table logical. If TRUE, a LaTeX table will be rendered with each pagkage as a row and a column for version loaded.
@@ -21,7 +21,7 @@
 #' @note In cases where it is not clear which specific package a function is from several packages are returned for that function. This is for example the case with filter().
 #' @export
 #'
-credit_packages <- function(input_dir = NULL,
+credit_packages <- function(fns = NULL,
                             pkgs_vec = NULL,
                             output_dir = NULL,
                             print_bibTeX = TRUE,
@@ -34,35 +34,32 @@ credit_packages <- function(input_dir = NULL,
                             verbose = TRUE
                             ){
 
-#input_dir = "../../Oceanic_computational_ASR/code/"
-#output_dir <- "."
+#fns <- list.files(path = "../../../../Nextcloud/Hedvigs_academia/2024/emergent_interface/Emergent_interface_Hedvig/", pattern = "*.[R|r]$", full.names = T, recursive = F)
+#    output_dir = "."
+#    pkgs_vec = NULL
 
-if(all(is.null(input_dir), is.null(pkgs_vec))){
-    stop("Neither input_dir nor pkgs_vec has been supplied.")
+if(all(is.null(fns), is.null(pkgs_vec))){
+    stop("Neither fns nor pkgs_vec has been supplied.")
 }
 
     if(is.null(output_dir)){
         stop("output_dir not supplied.")
     }
 
-
-
-    if(!is.null(input_dir)){
-
-r_fns <- list.files(path = input_dir, pattern = "*.[R|r]$", full.names = T, recursive = T)
+    if(!is.null(fns)){
 
 # df to bind to
 df <- data.frame("packages" = as.character(),
                  "functions" = as.character(),
                  "scripts" = as.character())
 
-for(fn in r_fns){
+for(fn in fns){
 
     if(verbose == TRUE){
   cat(paste0("I'm on ", fn, "\n"))
     }
 
-    #fn <- r_fns[3]
+    #fn <- fns[3]
 x <- .list.functions.in.file_SH(filename = fn) %>%
     as.data.frame() %>%
     tibble::rownames_to_column("packages") %>%
@@ -134,18 +131,16 @@ script_with_most_functions [1:5,])
 }
     }
 
-    if(is.null(input_dir) & !is.null(pkgs_vec)){
+    if(is.null(fns) & !is.null(pkgs_vec)){
         pkgs_to_cite <- pkgs_vec %>% unique()
             }
-    if(!is.null(input_dir) & !is.null(pkgs_vec)){
+    if(!is.null(fns) & !is.null(pkgs_vec)){
         pkgs_to_cite <- unique(c(used_packages$packages, pkgs_vec))
     }
 
-    if(!is.null(input_dir) & is.null(pkgs_vec)){
+    if(!is.null(fns) & is.null(pkgs_vec)){
         pkgs_to_cite <- unique(c(used_packages$packages))
     }
-
-
 
 
 if(print_bibTeX == TRUE){
@@ -169,7 +164,7 @@ R_bib_string <- utils::toBibtex(R_bib)
 
 bib <- readLines(output_fn)
 bib <- c(bib, R_bib_string)
-bib %>% write_lines(output_fn)
+bib %>% writeLines(output_fn)
 
 if(verbose == TRUE){
 
