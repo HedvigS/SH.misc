@@ -34,10 +34,14 @@ credit_packages <- function(fns = NULL,
                             verbose = TRUE
                             ){
 
-#fns <- list.files(path = "../../../../Nextcloud/Hedvigs_academia/2024/emergent_interface/Emergent_interface_Hedvig/", pattern = "*.[R|r]$", full.names = T, recursive = F)
+#fns <- list.files(path = "../../../Nextcloud/Hedvigs_academia/2024/emergent_interface/Emergent_interface_Hedvig/", pattern = "*.[R|r]$", full.names = T, recursive = F)
 #    output_dir = "."
 #    pkgs_vec = NULL
-
+# verbose = TRUE
+#  compare_loaded_with_used = TRUE
+  #  report_most_used_pkgs = TRUE
+#  report_script_with_most_funs = TRUE
+   
 if(all(is.null(fns), is.null(pkgs_vec))){
     stop("Neither fns nor pkgs_vec has been supplied.")
 }
@@ -78,7 +82,10 @@ df <- dplyr::full_join(x, df, by = c("packages", "functions", "scripts"))
 }
 
 used_packages <- df %>%
-  dplyr::mutate(used = "TRUE")
+  dplyr::mutate(used = "TRUE") %>% 
+  filter(packages != "") %>% 
+  filter(!is.na(packages) ) 
+  
 
 # dealing with instances where a package wasn't found. in pipe above this was listed as "" but it should be a proper NA
 used_packages <- naniar::replace_with_na(data = used_packages, replace= list(packages = ""))
@@ -131,7 +138,19 @@ script_with_most_functions [1:5,])
 }
     }
 
-    if(is.null(fns) & !is.null(pkgs_vec)){
+
+if("" %in% df$packages){
+
+  not_matched <-   df %>% 
+    filter(packages == ""|is.na(packages)) %>% 
+    distinct(functions) %>% .[,1] %>% as.vector()
+  
+  warning("There were some functions that couldn't be matched to packages. This could be because the package isn't loaded in this session. Run requirements.R or similar and run the function again. Another possible cause is that the functions don't belong to packages at all but were defined elsewhere. The functions that cannot be matched to packages are: ", not_matched)
+  
+  
+  } 
+  
+      if(is.null(fns) & !is.null(pkgs_vec)){
         pkgs_to_cite <- pkgs_vec %>% unique()
             }
     if(!is.null(fns) & !is.null(pkgs_vec)){
@@ -260,4 +279,8 @@ if(verbose == TRUE){
     outlist <- tapply(funs, factor(src), c)
     return(outlist)
 }
+
+
+credit_packages(fns = fns <- list.files(path = "../../../Nextcloud/Hedvigs_academia/2024/emergent_interface/Emergent_interface_Hedvig/", pattern = "*.[R|r]$", full.names = T, recursive = F), output_dir = ".")
+
 
