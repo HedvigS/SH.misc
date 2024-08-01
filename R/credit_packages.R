@@ -108,7 +108,7 @@ unused_but_loaded <- joined_df %>%
     dplyr::filter(!is.na(loaded)) %>%
     dplyr::distinct(packages) %>% .[,1] %>% as.vector()
 
-warning("There are packages that it seems like you're not using, but that are still loaded in the environment.\n
+warning("There are packages that it seems like you're not using, but that are still loaded in the environment. Please note that these could be crucial depdencies of other packages, but they don't contain functions that you are calling directly. Do not remove from loading without careful inspection.\n
         They are: \n ", unused_but_loaded, "\n If you don't want to check this, set 'compare_loaded_with_used' to FALSE.\n\n" )
 
 }
