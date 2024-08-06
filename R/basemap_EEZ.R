@@ -17,6 +17,7 @@
 #' @export
 
 basemap_EEZ <- function(xlim = c(-30, 330),
+                        EEZ_shp_df = NULL,
                                 ylim = c(-90, 90),
                                 south = "up",
                                 padding  = 0.1,
@@ -33,7 +34,7 @@ basemap_EEZ <- function(xlim = c(-30, 330),
 
     }
 
-load("sysdata.rda")
+#load("sysdata.rda")
 
   #loading data that is necessary for both kinds of plots
   world <- ggplot2::map_data("world", wrap = c(-30,330))
