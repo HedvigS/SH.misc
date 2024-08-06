@@ -3,11 +3,10 @@
 #' @param ylim numerical vector of lenght 2
 #' @param south description
 #' @param colour_land defaults to "white",
-#' @param colour_water defaults to "gray",
-#' @param colour_water_EEZ defaults to "lightgray",
-#' @param colour_outline_land defaults to "black",
+#' @param colour_ocean defaults to "gray",
+#' @param colour_ocean_EEZ defaults to "lightgray",
 #' @param colour_border_land defaults to "darkgray",
-#' @param colour_outline_eez defaults to "#949494",
+#' @param colour_border_eez defaults to "#949494",
 #' @param colour_lakes defaults to "lightgray"
 #' @import dplyr
 #' @import usethis
@@ -20,14 +19,19 @@
 basemap_EEZ <- function(xlim = c(-30, 330),
                                 ylim = c(-90, 90),
                                 south = "up",
+                                padding  = 0.1,
                                 colour_land = "white",
-                                colour_water = "gray",
-                                colour_water_EEZ = "lightgray",
-                                colour_outline_land = "black",
+                                colour_ocean = "gray",
+                                colour_ocean_EEZ = "lightgray",
                                 colour_border_land = "darkgray",
-                                colour_outline_eez = "#949494",
+                                colour_border_eez = "#949494",
                                 colour_lakes = "lightgray"
 ){
+
+    if(!south %in% c("up", "down")){
+        stop("Argument south has to be either 'up' or 'down'.")
+
+    }
 
 load("sysdata.rda")
 
@@ -35,16 +39,13 @@ load("sysdata.rda")
   world <- ggplot2::map_data("world", wrap = c(-30,330))
   lakes <- ggplot2::map_data("lakes", wrap = c(-30,330))
 
-    padding  <- 0.2
     p <- ggplot(world, aes(x = long, y = lat, group = group)) +
-      geom_polygon(data = EEZ_shp_df,
-                   color = colour_outline_eez,
-                   fill = colour_water_EEZ,
-                   linewidth = 0.25 +  padding) +
+        geom_polygon(data = EEZ_shp_df,
+                     color = colour_border_eez,
+                     fill = colour_ocean_EEZ,
+                     linewidth = 0.2 + 2 * padding) +
       geom_polygon(col = colour_border_land, fill = colour_land,
-                   linewidth = 0.25 + 2 * padding) +
-      geom_polygon(col = colour_border_land, fill = colour_land,
-                   linewidth = 0 + padding) +
+                   linewidth = 0.25) +
       geom_polygon(data = lakes, col = colour_border_land, fill = colour_lakes,
                    linewidth = 0.25 + 2 * padding) +
       geom_polygon(data = lakes, col = colour_lakes, fill = colour_lakes,
@@ -54,7 +55,7 @@ load("sysdata.rda")
             panel.grid.minor = element_blank(),
             axis.title=element_blank(),
             axis.line = element_blank(),
-            panel.background = element_rect(colour = NA, fill = colour_water),
+            panel.background = element_rect(colour = NA, fill = colour_ocean),
             axis.text = element_blank(),
             axis.ticks = element_blank(),
             plot.margin=grid::unit(c(0,0,-1,-1), "mm")
@@ -67,7 +68,8 @@ load("sysdata.rda")
       scale_x_continuous(expand = c(0,0)) +
       scale_y_continuous(expand = c(0,0))
 
-  }else{
+  }
+    if(south == "down"){
     p <- p  +
       coord_equal(xlim = xlim, ylim = ylim) +
       scale_x_continuous(expand = c(0,0)) +
@@ -77,11 +79,4 @@ load("sysdata.rda")
 
 
 p
-  }
-
-
-
-
-
-
-
+}
