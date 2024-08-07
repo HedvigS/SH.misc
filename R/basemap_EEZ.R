@@ -18,7 +18,7 @@
 
 basemap_EEZ <- function(xlim = c(-30, 330),
                         EEZ_shp_df = NULL,
-                                ylim = c(-90, 90),
+                                ylim = c(-60, 90),
                                 south = "up",
                                 padding  = 0.1,
                                 colour_land = "white",
@@ -35,23 +35,28 @@ basemap_EEZ <- function(xlim = c(-30, 330),
     }
 
 #load("sysdata.rda")
+#library(tidyverse)
+
 
   #loading data that is necessary for both kinds of plots
   world <- ggplot2::map_data("world", wrap = c(-30,330))
   lakes <- ggplot2::map_data("lakes", wrap = c(-30,330))
+
+#  colour_border_eez = "lightgray"
+#  colour_border_land = "white"
 
     p <- ggplot() +
         geom_polygon(data = EEZ_shp_df,
                      mapping = aes(x = long, y = lat, group = group),
                      color = colour_border_eez,
                      fill = colour_ocean_EEZ,
-                     linewidth = 0.2 + 2 * padding) +
+                     linewidth = 0.2 + 1 * padding) +
       geom_polygon(data = world, mapping = aes(x = long, y = lat, group = group),
                    col = colour_border_land, fill = colour_land,
                    linewidth = 0.25) +
       geom_polygon(data = lakes, mapping = aes(x = long, y = lat, group = group),
                    col = colour_border_land, fill = colour_lakes,
-                   linewidth = 0.25 + 2 * padding) +
+                   linewidth = 0.25 + 1 * padding) +
       geom_polygon(data = lakes, mapping = aes(x = long, y = lat, group = group),
                    col = colour_lakes, fill = colour_lakes,
                    linewidth = 0 + padding) +  theme_minimal() +
