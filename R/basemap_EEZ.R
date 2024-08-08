@@ -17,7 +17,6 @@
 #' @export
 
 basemap_EEZ <- function(xlim = c(-30, 330),
-                        EEZ_shp_df = NULL,
                                 ylim = c(-60, 90),
                                 south = "up",
                                 padding  = 0.1,
