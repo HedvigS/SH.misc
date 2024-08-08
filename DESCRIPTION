@@ -7,7 +7,6 @@ Authors@R: c(
            comment = c(ORCID = "0000-0002-6302-6641")),
     person("Hedvig", "Skirgård", , "hedvig.public@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-7748-2381")))
-
 Description: 
 License: Apache License (>= 2)
 Roxygen: list(markdown = TRUE)
@@ -15,10 +14,10 @@ RoxygenNote: 7.2.3
 Suggests:
     phangorn,
     assertthat
-
 Imports:
     caper,
     ape,
     dplyr,
     magrittr
-
+Depends: 
+    R (>= 2.10)
