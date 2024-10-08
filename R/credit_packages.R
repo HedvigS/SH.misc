@@ -57,7 +57,7 @@ if(all(is.null(fns), is.null(extra_pkgs))){
 # df to bind to
 df <- data.frame("packages" = as.character(),
                  "functions" = as.character(),
-                 "scripts" = as.character())
+                 "script" = as.character())
 
 for(fn in fns){
 
@@ -67,16 +67,16 @@ for(fn in fns){
 
     #fn <- fns[3]
 x <- .list.functions.in.file_SH(filename = fn) %>%
-    dplyr::mutate(package = stringr::str_replace_all(package, "package:", "")) %>%
-    dplyr::mutate(package = stringr::str_replace_all(package, "c\\(", "")) %>%
-    dplyr::mutate(package = stringr::str_replace_all(package, "\\)", "")) %>%
-    dplyr::mutate(package = stringr::str_replace_all(package, "\\\"", "")) %>%
-    dplyr::mutate(package = stringr::str_replace_all(package, "character\\(0", "")) %>%
-    dplyr::mutate(package = stringr::str_split(package, ",")) %>%
-    tidyr::unnest(cols = "package") %>%
-    dplyr::mutate(scripts = fn)
+    dplyr::mutate(packages = stringr::str_replace_all(packages, "package:", "")) %>%
+    dplyr::mutate(packages = stringr::str_replace_all(packages, "c\\(", "")) %>%
+    dplyr::mutate(packages = stringr::str_replace_all(packages, "\\)", "")) %>%
+    dplyr::mutate(packages = stringr::str_replace_all(packages, "\\\"", "")) %>%
+    dplyr::mutate(packages = stringr::str_replace_all(packages, "character\\(0", "")) %>%
+    dplyr::mutate(packages = stringr::str_split(packages, ";")) %>%
+    tidyr::unnest(cols = "packages") %>%
+    dplyr::mutate(script = fn)
 
-df <- dplyr::full_join(x, df, by = c("packages", "functions", "scripts"))
+df <- dplyr::full_join(x, df, by = c("packages", "functions", "script"))
 }
 
 used_packages <- df %>%
@@ -125,7 +125,7 @@ most_used[1:5,]))
 
 if(report_script_with_most_funs == TRUE){
 script_with_most_functions <-  used_packages %>%
-    dplyr::group_by(scripts) %>%
+    dplyr::group_by(script) %>%
     dplyr::summarise(n = n()) %>%
     dplyr::arrange(desc(n))
 
@@ -141,7 +141,7 @@ if("" %in% df$packages & verbose == TRUE){
 
   not_matched <-   df %>%
     filter(packages == ""|is.na(packages)) %>%
-    distinct(functions) %>% .[,1] %>% as.vector()
+    distinct("function") %>% .[,1] %>% as.vector()
 
   warning("There were some functions that couldn't be matched to packages. This could be because the package isn't loaded in this session. Run requirements.R or similar and run the function again. Another possible cause is that the functions don't belong to packages at all but were defined elsewhere. The functions that cannot be matched to packages are:.\n ", not_matched, "\n\n" )
 
@@ -268,9 +268,9 @@ if(verbose == TRUE){
     tmp <- getParseData(parse(filename, keep.source = TRUE))
     funs <- tmp$text[which(tmp$token == "SYMBOL_FUNCTION_CALL")]
 
-    df <- data.frame("function" = funs)
+    df <- data.frame("functions" = funs)
     df[,2] <- NA #make empty col to fill in for-loop
-    colnames(df) <- c("function", "package")
+    colnames(df) <- c("functions", "packages")
 
     for(i in 1:nrow(df)){
 
@@ -280,7 +280,6 @@ if(verbose == TRUE){
 
     return(df)
 }
-
 
 #credit_packages(fns = fns <- list.files(path = "../../../Nextcloud/Hedvigs_academia/2024/emergent_interface/Emergent_interface_Hedvig/", pattern = "*.[R|r]$", full.names = T, recursive = F), output_dir = "../../../Nextcloud/Hedvigs_academia/2024/emergent_interface/Emergent_interface_Hedvig/output/package_versions/")
 
