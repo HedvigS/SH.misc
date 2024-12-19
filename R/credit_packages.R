@@ -14,6 +14,9 @@
 #' @return Data-frame of all used functions. Depending on the arguments, the function also returns output to the terminal and/or files written to the output directory.
 #' @author Hedvig Skirgård
 #' @import dplyr
+#' @import bib2df
+#' @import tibble
+#' @import knitr
 #' @import magrittr
 #' @import tidyr
 #' @importFrom get.ext reader
