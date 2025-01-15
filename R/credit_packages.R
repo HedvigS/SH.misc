@@ -1,4 +1,4 @@
-#' Lists used packages in a set of R-script and generates citation keys.
+#' Lists used packages in a set of R-script and generates citation keys, bibtex-file, tables etc.
 #'
 #' @param fns character vector of file-names to R-scripts to read in.
 #' @param extra_pkgs character vector. Names of R-packages, either instead of fns or in addition to it. Sometimes some packages are missed when searching through the scripts, if you add their names here they'll be included in the output despite this.
