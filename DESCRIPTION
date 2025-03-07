@@ -3,20 +3,23 @@ Title: Assorted functions for data science in linguistics
 Version: 0.0.0.9000
 Encoding: UTF-8
 Authors@R: c(
-    person("Siva", "Kalyan", , "sivak.au@gmail.com", role = c("aut"),
-           comment = c(ORCID = "0000-0002-6302-6641")),
     person("Hedvig", "Skirgård", , "hedvig.public@gmail.com", role = c("aut", "cre"),
-           comment = c(ORCID = "0000-0002-7748-2381")))
-
+           comment = c(ORCID = "0000-0002-7748-2381")),
+    person("Siva", "Kalyan", , "sivak.au@gmail.com", role = c("aut"),
+           comment = c(ORCID = "0000-0002-6302-6641")))
 Description: 
 License: Apache License (>= 2)
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
-Depends:
-    	dplyr
-	magrittr
-	optrees
-	infotheo        furrr        fields        igraph,        cluster         ape        entropy         knitr        MASS         glue        reshape2
+Suggests:
+    phangorn,
+    reader,
+    xtable,
+    assertthat
 Imports:
     caper,
-    Ape
+    ape,
+    dplyr,
+    magrittr
+Depends: 
+    R (>= 2.10)

@@ -1,2 +1,7 @@
 export(credit_packages)
 export(phylo.d_wrapper)
+export(fetch_lines)
+export(stack_tsvs)
+export(keep_as_tip)
+export(get_zenodo_dir)
+export(basemap_EEZ)

@@ -4,3 +4,6 @@
 .Ruserdata
 **.DS_Store
 **R.Rproj
+.Rbuildignore
+SH.misc.Rproj
+R/used_pkgs.bib
