@@ -64,7 +64,7 @@ df <- data.frame("packages" = as.character(),
 
 for(fn in fns){
 
-    if(verbose == TRUE){
+        if(verbose == TRUE){
   cat(paste0("I'm on ", fn, "\n"))
     }
 
@@ -167,14 +167,8 @@ if(print_bibTeX == TRUE){
 
     output_fn <- paste0(output_dir, "/used_pkgs.bib")
 
-    knitr::write_bib(as.character(pkgs_to_cite), file = output_fn)
+    knitr::write_bib(as.character(pkgs_to_cite), file = output_fn, tweak = T)
 
-readLines(output_fn) %>%
-  stringr::str_replace_all("\\&", "\\\\&") %>% #sorting out issues with ampersand
-  stringr::str_replace_all("\\\\\\\\&", "\\\\&") %>%
-    writeLines(output_fn)
-
-##adding in citation for R itself
 
 #https://stackoverflow.com/questions/46179997/r-missing-bib-key-in-citation-output
 R_bib = utils::citation(package = "base")
@@ -280,6 +274,12 @@ if(verbose == TRUE){
         funs <- utils::find(df[i,1])
         df[i,2] <- paste0(funs, collapse = ";")
     }
+
+
+    if(verbose == TRUE){
+        warning("Note that some publishers reference style will require a 'date accessed' for all references with a URL.")
+            }
+
 
     return(df)
 }
