@@ -64,7 +64,7 @@ df <- data.frame("packages" = as.character(),
 
 for(fn in fns){
 
-    if(verbose == TRUE){
+        if(verbose == TRUE){
   cat(paste0("I'm on ", fn, "\n"))
     }
 
@@ -167,12 +167,12 @@ if(print_bibTeX == TRUE){
 
     output_fn <- paste0(output_dir, "/used_pkgs.bib")
 
-    knitr::write_bib(as.character(pkgs_to_cite), file = output_fn)
+    knitr::write_bib(as.character(pkgs_to_cite), file = output_fn, tweak = T)
 
-readLines(output_fn) %>%
-  stringr::str_replace_all("\\&", "\\\\&") %>% #sorting out issues with ampersand
-  stringr::str_replace_all("\\\\\\\\&", "\\\\&") %>%
-    writeLines(output_fn)
+#readLines(output_fn) %>% View()
+#  stringr::str_replace_all("\\&", "\\\\&") %>% #sorting out issues with ampersand
+#  stringr::str_replace_all("\\\\\\\\&", "\\\\&") %>%
+#    writeLines(output_fn)
 
 ##adding in citation for R itself
 
@@ -215,6 +215,12 @@ if(verbose == TRUE){
 }
 
 }
+
+#    install.packages("pkgsearch")
+#    library(pkgsearch)
+#    pkg_info <- pkgsearch::cran_package("dplyr", version = "1.1.4")
+#    pkg_info$`Date/Publication`
+
 
     pkgs_to_cite_df <- installed.packages()[pkgs_to_cite, "Version"] %>%
         as.data.frame() %>%
