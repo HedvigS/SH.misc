@@ -33,9 +33,6 @@ basemap_EEZ <- function(xlim = c(-30, 330),
 
     }
 
-#load("sysdata.rda")
-#library(tidyverse)
-
 
   #loading data that is necessary for both kinds of plots
   world <- ggplot2::map_data("world", wrap = c(-30,330))
