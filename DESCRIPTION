@@ -20,6 +20,7 @@ Imports:
     caper,
     ape,
     fs,
+    maps,
     dplyr,
     magrittr
 Depends: 
