@@ -19,6 +19,7 @@ Suggests:
 Imports:
     caper,
     ape,
+    fs,
     dplyr,
     magrittr
 Depends: 
