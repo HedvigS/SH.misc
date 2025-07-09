@@ -12,14 +12,15 @@ License: Apache License (>= 2)
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Suggests:
+    Imports:
+    caper,
+    ape,
     phangorn,
     reader,
     xtable,
-    assertthat
-Imports:
-    caper,
-    ape,
+    assertthat,
     fs,
+    ggplot2,
     maps,
     dplyr,
     magrittr
