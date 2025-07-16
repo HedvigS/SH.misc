@@ -1,5 +1,5 @@
 Package: SH.misc
-Title: Assorted functions for data science in linguistics
+Title: Assorted Functions for Data Science in Linguistics
 Version: 0.0.0.9000
 Encoding: UTF-8
 Authors@R: c(
@@ -8,8 +8,8 @@ Authors@R: c(
     person("Siva", "Kalyan", email = "sivak.au@gmail.com", role = "aut",
            comment = c(ORCID = "0000-0002-6302-6641"))
 )
-
-Description: 
+Description: Assorted utility functions useful for working with
+    linguistic data and performing basic analyses in R.
 License: Apache License 2.0
 Imports:
     ape,
