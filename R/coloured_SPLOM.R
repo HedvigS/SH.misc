@@ -5,7 +5,7 @@
 #' @param col_pairs_constraint characther vector. Default =  "None". Name of column whereby to identify secondary id, see Note for details.
 #' @param cols_to_constrain characther vector. Default =  "None".Name(s) of column(s) to which the secondary id constraint apply in order to not double-count.
 #' @param hist_label_size  numeric. Default =  3, Font size of the text at the diagonal histograms
-#' @param text_cor_size numeric. Default = 7. Font size of the text in the upper half reporting the Pearson correlation coefficient.
+#' @param text_cor_size numeric. Default = 5. Font size of the text in the upper half reporting the Pearson correlation coefficient.
 #' @param text_strip_size numeric. Default =  12. Font size of the strips.
 #' @param hist_bins numeric. Default = 30. Number of bins in the diagonal histograms.
 #' @param herringbone = logical. Default = FALSE. Wether or not to color the SPLOM according to a "herringbone" pattern or unique colors for each pair.
@@ -27,7 +27,7 @@ coloured_SPLOM <- function(df = df,
                            col_pairs_constraint = "None",
                            cols_to_constrain = "None",
                            hist_label_size  = 3, #font size of the text at the diagonal
-                           text_cor_size = 7,
+                           text_cor_size = 5,
                            text_strip_size = 12,
                            hist_bins = 30,
                            herringbone = FALSE,
