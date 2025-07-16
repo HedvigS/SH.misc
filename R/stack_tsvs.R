@@ -5,9 +5,9 @@
 #' @return data-frame with content of all tsvs stacked and a column with filename.
 #' @note All content will be turned into character to facilitate joining and then the col-types will be converted back to appropriate class for the whole data-frame.
 #' @author Hedvig Skirgård.
-#' @import dplyr
-#' @import purrr
-#' @import data.table
+#' @importFrom dplyr mutate
+#' @importFrom purrr map_df
+#' @importFrom readr type_convert
 #' @import readr
 #'
 
