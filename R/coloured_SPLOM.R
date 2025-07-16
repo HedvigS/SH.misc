@@ -16,8 +16,7 @@
 #' @importFrom ggplot2 ggplot geom_point theme_minimal theme element_rect element_blank geom_rect aes annotate xlim ylim theme_void geom_histogram theme_minimal as_label
 #' @importFrom GGally ggpairs
 #' @note This argument is for when you are comparing variables accross a set of data, but there are two levels of granularity to defining the observation. For example, in the multilingual corpora collection Universal Dependencies (UD) there are datasets that can be tied to languages (many-to-one mapping) and in Grambank & Google's Linguameta there are only languages. If we want to compare information from UD, Grambank and Linguameta, we don't want to double-count the same languages when comparing Grambank and Linguameta. Therefore, in such an instance, the user should specify a secondary ID variable (e.g. "glottocode" in col_pairs_constraint) and the names of the columns (variable) to which this applies (e.g. "Grambank Fusion" and "Google Pop") in cols_to_constrain.
-#'
-#'
+#' @export
 #'
 
 ###############
