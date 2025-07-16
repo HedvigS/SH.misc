@@ -6,7 +6,7 @@
 #' @author Hedvig Skirgård
 #' @export
 
-get_zenodo_dir <- function(url, exdir, drop_dir_level = TRUE){
+get_zip_from_url <- function(url, exdir, drop_dir_level = TRUE){
 
 #  url <- c("https://zenodo.org/record/7740822/files/grambank/grambank-analysed-v1.0.zip")
 #  exdir = c("../grambank-analysed/")
@@ -15,7 +15,7 @@ get_zenodo_dir <- function(url, exdir, drop_dir_level = TRUE){
 #setting up a tempfile path where we can put the zipped files before unzipped to a specific location
 filepath <- file.path(tempfile())
 
-utils::download.file(file.path(url), destfile = filepath)
+utils::download.file(file.path(url), destfile = filepath, mode = "wb")
 utils::unzip(zipfile = filepath, exdir = exdir)
 
 if(drop_dir_level == TRUE){
