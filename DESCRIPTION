@@ -6,8 +6,7 @@ Authors@R: c(
     person("Hedvig", "Skirgård", email = "hedvig.public@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-7748-2381")),
     person("Siva", "Kalyan", email = "sivak.au@gmail.com", role = "aut",
-           comment = c(ORCID = "0000-0002-6302-6641"))
-)
+           comment = c(ORCID = "0000-0002-6302-6641")))
 Description: Assorted utility functions useful for working with
     linguistic data and performing basic analyses in R.
 License: Apache License 2.0
