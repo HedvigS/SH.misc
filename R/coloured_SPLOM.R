@@ -9,6 +9,7 @@
 #' @param text_strip_size numeric. Default =  12. Font size of the strips.
 #' @param hist_bins numeric. Default = 30. Number of bins in the diagonal histograms.
 #' @param herringbone = logical. Default = FALSE. Wether or not to color the SPLOM according to a "herringbone" pattern or unique colors for each pair.
+#' @param cor_value_cut_off description
 #' @param alpha_point numeric. Default = 0.8. Transperency of points in scatterplots.
 #' @importFrom randomcoloR distinctColorPalette
 #' @importFrom dplyr select distinct all_of
@@ -29,6 +30,7 @@ coloured_SPLOM <- function(df = df,
                            text_cor_size = 5,
                            text_strip_size = 12,
                            hist_bins = 30,
+                           cor_value_cut_off = 0.6,
                            herringbone = FALSE,
                            alpha_point = 0.8){
 
@@ -157,8 +159,8 @@ custom_upper <- function(data, mapping, pair_colors_map, method = "pearson", ...
   # Set text color based on correlation strength and significance
   if (p < 0.05) {
     color_scale <- scales::col_bin(
-      palette = c("grey40", "darkred"),
-      bins = c(0, 0.6, 1),
+      palette = c("grey70", "darkred"),
+      bins = c(0, cor_value_cut_off, 1),
       domain = c(0, 1)
     )
 
@@ -167,9 +169,16 @@ custom_upper <- function(data, mapping, pair_colors_map, method = "pearson", ...
     fontface <- if(r > 0.5|r<0.5){"bold"}else{"plain"}
 
   } else {
-    text_color <- "grey60"
+    text_color <- "grey70"
     fontface <- "plain"
   }
+
+  color_scale <- scales::gradient_n_pal(
+      colours = c("grey70", "grey70", "darkred"),
+      values = c(0, cor_value_cut_off, 1)
+  )
+
+  outline_box_color <- color_scale(abs(r))
 
   label <- paste0(round(r, 2),ifelse(p < 0.05, "*", ""))
    sublabel <- paste0(               "(n=", nrow(data_reduced), ")")
@@ -183,9 +192,11 @@ custom_upper <- function(data, mapping, pair_colors_map, method = "pearson", ...
   pad_y <- 0.3
 
   ggplot2::ggplot() +
-    ggplot2::geom_rect(aes(xmin = x_center - pad_x, xmax = x_center + pad_x,
-                  ymin = y_center - pad_y, ymax = y_center + pad_y),
-              fill = "white", color = NA, alpha = 0.8) +
+    ggplot2::geom_rect(aes(xmin = x_center - pad_x,
+                           xmax = x_center + pad_x,
+                           ymin = y_center - pad_y,
+                           ymax = y_center + pad_y),
+              fill = "white", alpha = 0.8, color =  outline_box_color) +
     ggplot2::annotate("text", x = x_center, y = y_center+0.1,
              label = label, size = text_cor_size, color = text_color, fontface = fontface) +
     ggplot2::annotate("text", x = x_center, y = y_center - 0.1,
