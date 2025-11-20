@@ -23,7 +23,7 @@ phylo.d_wrapper <- function(data, var.name, ...) {
         table() %>% `/`(sum(.)) %>% min()
 
     if (min_prop < 0.05) {
-        stop(
+        warning(
             "The distribution of tips over the two binary values is too skewed; fewer than 5% of tips are in the minority state. Applying D-estimate calculation to such skewed data can generate unreliable results.\n"
         )
     }
