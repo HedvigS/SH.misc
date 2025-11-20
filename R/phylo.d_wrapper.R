@@ -22,10 +22,8 @@ phylo.d_wrapper <- function(data, var.name, ...) {
     min_prop <- data$data[[var.name]] %>%
         table() %>% `/`(sum(.)) %>% min()
 
-    if (min_prop < 0.05) {
-        warning(
-            "The distribution of tips over the two binary values is too skewed; fewer than 5% of tips are in the minority state. Applying D-estimate calculation to such skewed data can generate unreliable results.\n"
-        )
+    if (min_prop <=0.05) {
+          warning( "The distribution of tips over the two binary values is very skewed; fewer than 5% of tips are in the minority state. Applying D-estimate calculation to such skewed data can generate unreliable results.\n")
     }
 
     result <-
@@ -34,40 +32,40 @@ phylo.d_wrapper <- function(data, var.name, ...) {
             list(this_var = as.name(var.name))
         ))
 
-    if (result$Pval0 > 0.05 &
-        result$Pval1 > 0.05) {
-        stop(
-            "Brownian and random simulations are not sufficiently distinct from each other to provide a meaningful D-estimate; observed values appear to be explainable under either model (pval0 > 0.05 & pval1 > 0.05)."
-        )
+    if (result$Pval0 >=0.05 &
+        result$Pval1 >=0.05) {
+        note <- "Brownian and random simulations are not sufficiently distinct from each other to provide a meaningful D-estimate; observed values appear to be explainable under either model (pval0 >=0.05 & pval1 >=0.05)."
+        warning(note)
     }
 
-
-    if (result$Pval0 > 0.05 &
-        result$Pval1 < 0.05) {
-        cat(
-            "Observed values are definitely on the Brownian/clumped end of the spectrum (pval0 > 0.05 & pval1 < 0.05).\n"
-        )
+    if (result$Pval0 >=0.05 &
+        result$Pval1 <=0.05) {
+        note <-  "Observed values are definitely on the Brownian/clumped end of the spectrum (pval0 >=0.05 & pval1 <=0.05).\n"
+        cat(note)
     }
-    else if (result$Pval0 < 0.05 &
-             result$Pval1 > 0.05) {
-        cat(
-            "Observed values are definitely on the random/overdispersed end of the spectrum (pval0 < 0.05 & pval1 > 0.05).\n"
-        )
+  if (result$Pval0 <=0.05 &
+             result$Pval1 >=0.05) {
+        note <-   "Observed values are definitely on the random/overdispersed end of the spectrum (pval0 <=0.05 & pval1 >=0.05).\n"
+        cat(note)
     }
-    else if (result$Pval0 < 0.05 &
-             result$Pval1 < 0.05) {
-        cat(
-            "Observed values are definitely between Brownian/clumped and random/over-dispersed (pval0 < 0.05 & pval1 < 0.05).\n"
-        )
+if (result$Pval0 <=0.05 &
+             result$Pval1 <=0.05) {
+        note <-  "Observed values are dissimilar to both Brownian and random (pval0 <=0.05 & pval1 <=0.05).\n"
+        cat(note)
     }
 
+    if (result$Pval0 ==0.05 &
+        result$Pval1 ==0.05) {
+        note <-  "Observed values are dissimilar to both Brownian and random but they are both exactly at 0.05 (pval0 == 0.05 & pval1 ==0.05).\n"
+        cat(note)
+    }
 
-    if (result$DEstimate < -7) {
+    if (result$DEstimate <=-7) {
         warning("The resulting D-estimate is lower than 7. This isn't impossible, but unusual.\n")
     }
-    else if (result$DEstimate > 7) {
+    else if (result$DEstimate >=7) {
         warning("The resulting D-estimate is higher than 7. This isn't impossible, but unusual.\n")
     }
-
+    result$note <- note
     result
 }
