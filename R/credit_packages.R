@@ -13,14 +13,14 @@
 #' @param verbose logical. If TRUE, the function will be more talkative.
 #' @return Data-frame of all used functions. Depending on the arguments, the function also returns output to the terminal and/or files written to the output directory.
 #' @author Hedvig Skirgård
-#' @import dplyr (>= 1.1.4)
-#' @import bib2df (>= 1.1.1)
-#' @import tibble (>= 1.8-4)
+#' @import dplyr
+#' @import bib2df
+#' @import tibble
 #' @import knitr
 #' @import magrittr
 #' @import tidyr
-#' @importFrom get.ext reader (>= 1.0.6)
-#' @import xtable (>= 1.8-4)
+#' @importFrom reader get.ext
+#' @import xtable
 #' @note In cases where it is not clear which specific package a function is from several packages are returned for that function. This can for example be the case with filter(). This function uses an adapted version of 'list.functions.in.file' from the package NC.misc. That function was written by Nicholas Cooper 'njcooper (at) gmx.co.uk'. The adjustment consist of removing unique() such that all instances are reported.
 #' @export
 #'

@@ -13,14 +13,25 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Suggests:
     phangorn,
-    reader,
-    xtable,
     assertthat,
     testthat (>= 3.0.0)
 Imports:
     caper,
     ape,
-    dplyr
+    dplyr,
+    bib2df,
+    data.table,
+    fs,
+    ggplot2,
+    knitr,
+    magrittr,
+    purrr,
+    readr,
+    tibble,
+    tidyr,
+    usethis,
+    xtable,
+    reader
 Depends: 
     R (>= 2.10)
 Config/testthat/edition: 3
