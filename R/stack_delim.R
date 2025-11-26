@@ -36,7 +36,7 @@ stack_delim <- function(fns = fns,
             #                                sep = "\t", na.strings = "",
             # ) %>%
 
-            dplyr::mutate(across(everything(), as.character)) %>%
+            dplyr::mutate(across(dplyr::everything(), as.character)) %>%
             dplyr::mutate(filename =x)
         df
     }
