@@ -2,6 +2,7 @@
 #'
 #' @param fns character vector of file names.
 #' @param verbose logical. If TRUE, function will report on which file it is at etc.
+#' @param delim character vector for delim, defaults to "\t".
 #' @return data-frame with content of all tsvs stacked and a column with filename.
 #' @note All content will be turned into character to facilitate joining and then the col-types will be converted back to appropriate class for the whole data-frame.
 #' @author Hedvig Skirgård.
@@ -13,8 +14,8 @@
 
 #dir = "../../Glottobank/Grambank/original_sheets/"
 
-stack_tsvs <- function(fns = fns,
-                       verbose= TRUE){
+stack_delim <- function(fns = fns,
+                       verbose= TRUE, delim = "\t"){
 
 
 
@@ -28,7 +29,7 @@ stack_tsvs <- function(fns = fns,
         if(verbose == TRUE){
             cat("I'm at file ", x, ".\n")
         }
-        df <- read.delim(file = x, sep = "\t", header = TRUE, encoding = 'UTF-8', na.strings = "") %>%
+        df <- read.delim(file = x, sep = delim, header = TRUE, encoding = 'UTF-8', na.strings = "") %>%
             #    data.table::fread(x ,
             #                                encoding = 'UTF-8', header = TRUE,
             #                                fill = TRUE, blank.lines.skip = TRUE,
