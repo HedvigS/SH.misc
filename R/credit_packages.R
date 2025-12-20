@@ -10,6 +10,7 @@
 #' @param compare_loaded_with_used logical. If TRUE, the set of packages that the scripts used are compared to those loaded currently in the environment and reported in terminal.
 #' @param report_most_used_pkgs logical. If TRUE, the function will report which are the 5 packages you use the most functions from to the terminal.
 #' @param report_script_with_most_funs logical. If TRUE, the function will report which script has the most function calls to the terminal.
+#' @param exclude_base logical. If TRUE, base packages ("compiler" ,  "graphics" ,  "tools" ,     "rstudioapi" ,"utils"  ,    "grDevices",  "stats" ,  "datasets" ,  "methods"  ,  "base") are excluded.
 #' @param verbose logical. If TRUE, the function will be more talkative.
 #' @return Data-frame of all used functions. Depending on the arguments, the function also returns output to the terminal and/or files written to the output directory.
 #' @author Hedvig Skirgård
@@ -34,16 +35,9 @@ credit_packages <- function(fns = NULL,
                             print_LaTeX_table = TRUE,
                             print_tsv = TRUE,
                             report_script_with_most_funs = TRUE,
+                            exclude_base = TRUE,
                             verbose = TRUE
                             ){
-
-#fns <- list.files(path = "../../../Nextcloud/Hedvigs_academia/2024/emergent_interface/Emergent_interface_Hedvig/", pattern = "*.[R|r]$", full.names = T, recursive = F)
-#    output_dir = "."
-#    pkgs_vec_manual = NULL
-# verbose = TRUE
-#  compare_loaded_with_used = TRUE
-  #  report_most_used_pkgs = TRUE
-#  report_script_with_most_funs = TRUE
 
 if(all(is.null(fns), is.null(pkgs_vec_manual))){
     stop("Neither fns nor pkgs_vec_manual has been supplied.")
@@ -80,6 +74,13 @@ x <- .list.functions.in.file_SH(filename = fn) %>%
     dplyr::mutate(script = fn)
 
 df <- dplyr::full_join(x, df, by = c("packages", "functions", "script"))
+}
+
+if(exclude_base == TRUE){
+base_R_packages <- c("compiler" ,  "graphics" ,  "tools" ,     "rstudioapi" ,"utils"  ,    "grDevices",  "stats" ,  "datasets" ,  "methods"  ,  "base")
+
+df <- df %>% 
+  dplyr::filter(!`packages` %in% base_R_packages)
 }
 
 used_packages <- df %>%
