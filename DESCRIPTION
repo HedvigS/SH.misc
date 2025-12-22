@@ -23,7 +23,6 @@ Imports:
     dplyr,
     fs,
     ggplot2,
-    knitr,
     magrittr,
     purrr,
     reader,
@@ -34,6 +33,7 @@ Imports:
     xtable
 Suggests:
     assertthat,
+    knitr,
     phangorn,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
