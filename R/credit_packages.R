@@ -13,14 +13,6 @@
 #' @param verbose logical. If TRUE, the function will be more talkative.
 #' @return Data-frame of all used functions. Depending on the arguments, the function also returns output to the terminal and/or files written to the output directory.
 #' @author Hedvig Skirgård
-#' @import dplyr
-#' @import bib2df
-#' @import tibble
-#' @import knitr
-#' @import magrittr
-#' @import tidyr
-#' @importFrom reader get.ext
-#' @import xtable
 #' @note In cases where it is not clear which specific package a function is from several packages are returned for that function. This can for example be the case with filter(). This function uses an adapted version of 'list.functions.in.file' from the package NC.misc. That function was written by Nicholas Cooper 'njcooper (at) gmx.co.uk'. The adjustment consist of removing unique() such that all instances are reported.
 #' @export
 #'
@@ -107,7 +99,7 @@ joined_df <- dplyr::full_join(used_packages, loaded_packages, by = "packages")
 unused_but_loaded <- joined_df %>%
     dplyr::filter(is.na(used)) %>%
     dplyr::filter(!is.na(loaded)) %>%
-    dplyr::distinct(packages) %>% .[,1] %>% as.vector()
+    dplyr::distinct(packages)[,1] %>% as.vector()
 
 warning("There are packages that it seems like you're not using, but that are still loaded in the environment. Please note that these could be crucial depdencies of other packages, but they don't contain functions that you are calling directly. Do not remove from loading without careful inspection.\n
         They are: \n ", unused_but_loaded, "\n If you don't want to check this, set 'compare_loaded_with_used' to FALSE.\n\n" )
@@ -144,7 +136,7 @@ if("" %in% df$packages & verbose == TRUE){
 
   not_matched <-   df %>%
     filter(packages == ""|is.na(packages)) %>%
-    distinct("function") %>% .[,1] %>% as.vector()
+    distinct("function")[,1] %>% as.vector()
 
   warning("There were some functions that couldn't be matched to packages. This could be because the package isn't loaded in this session. Run requirements.R or similar and run the function again. Another possible cause is that the functions don't belong to packages at all but were defined elsewhere. The functions that cannot be matched to packages are:.\n ", not_matched, "\n\n" )
 
@@ -216,14 +208,14 @@ if(verbose == TRUE){
 
 }
 
-    pkgs_to_cite_df <- installed.packages()[pkgs_to_cite, "Version"] %>%
+    pkgs_to_cite_df <- utils::installed.packages()[pkgs_to_cite, "Version"] %>%
         as.data.frame() %>%
         tibble::rownames_to_column("Package") %>%
         dplyr::rename("Version" = "." )
 
     if(print_tsv == TRUE ){
     pkgs_to_cite_df %>%
-        write_tsv(paste0(output_dir,"/pkgs_versions_table.tsv"))
+        readr::write_tsv(paste0(output_dir,"/pkgs_versions_table.tsv"))
 
         if(verbose == TRUE){
             cat(paste0("Wrote ", output_dir,"/pkgs_versions_table.tsv \n"))
@@ -268,7 +260,7 @@ if(verbose == TRUE){
     if (!reader::get.ext(filename) == "R") {
         warning("expecting *.R file, will try to proceed")
     }
-    tmp <- getParseData(parse(filename, keep.source = TRUE))
+    tmp <- utils::getParseData(parse(filename, keep.source = TRUE))
     funs <- tmp$text[which(tmp$token == "SYMBOL_FUNCTION_CALL")]
 
     df <- data.frame("functions" = funs)

@@ -8,7 +8,9 @@
 #' @param verbose logical If TRUE, function will message.
 #' @author Hedvig Skirgård
 #' @examples
-#' # fetch_lines(url = "https://github.com/HedvigS/R_grambank_cookbook/raw/main/functions/make_theo_scores.R", out_dir = ".")
+#' # fetch_lines(url = 
+#' #   "https://github.com/HedvigS/R_grambank_cookbook/raw/main/functions/make_theo_scores.R", 
+#' #   out_dir = ".")
 #'
 #' @export
 #'

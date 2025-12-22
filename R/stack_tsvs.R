@@ -4,11 +4,7 @@
 #' @param verbose logical. If TRUE, function will report on which file it is at etc.
 #' @return data-frame with content of all tsvs stacked and a column with filename.
 #' @note All content will be turned into character to facilitate joining and then the col-types will be converted back to appropriate class for the whole data-frame.
-#' @author Hedvig Skirgård.
-#' @import dplyr
-#' @import purrr
-#' @import data.table
-#' @import readr
+#' @author Hedvig Skirgård
 #'
 
 #dir = "../../Glottobank/Grambank/original_sheets/"

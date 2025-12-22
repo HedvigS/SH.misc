@@ -33,6 +33,7 @@ Imports:
     tibble,
     tidyr,
     usethis,
+    utils,
     xtable
 Suggests:
     assertthat,

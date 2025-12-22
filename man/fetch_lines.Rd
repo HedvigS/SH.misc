@@ -30,7 +30,9 @@ fetch_lines(
 Fetch text content from internet or other location and write to new location.
 }
 \examples{
-# fetch_lines(url = "https://github.com/HedvigS/R_grambank_cookbook/raw/main/functions/make_theo_scores.R", out_dir = ".")
+# fetch_lines(url = 
+#   "https://github.com/HedvigS/R_grambank_cookbook/raw/main/functions/make_theo_scores.R", 
+#   out_dir = ".")
 
 }
 \author{

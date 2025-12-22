@@ -21,5 +21,5 @@ Stacks content of multiple tsv-files on-top of each other.
 All content will be turned into character to facilitate joining and then the col-types will be converted back to appropriate class for the whole data-frame.
 }
 \author{
-Hedvig Skirgård.
+Hedvig Skirgård
 }
