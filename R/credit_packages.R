@@ -1,7 +1,7 @@
 #' Lists used packages in a set of R-script and generates citation keys, bibtex-file, tables etc.
 #'
 #' @param fns character vector of file-names to R-scripts to read in.
-#' @param extra_pkgs character vector. Names of R-packages, either instead of fns or in addition to it. Sometimes some packages are missed when searching through the scripts, if you add their names here they'll be included in the output despite this.
+#' @param pkgs_vec_manual character vector. Names of R-packages, either instead of fns or in addition to it. Sometimes some packages are missed when searching through the scripts, if you add their names here they'll be included in the output despite this. You can also set fns to NULL and only use this argument to generate the references etc.citation
 #' @param output_dir character vector. Name of directory to print bibTeX file and citation-keys. Necessary if print_bibTeX == TRUE and/or print_tex_citation_string == TRUE.
 #' @param print_bibTeX logical. If TRUE, a bibTeX file is written with entries for the packages found to be used. File will be written to output_dir as "used_pkgs.bib"
 #' @param print_LaTeX_table logical. If TRUE, a LaTeX table will be rendered with each pagkage as a row and a column for version loaded.
@@ -17,7 +17,7 @@
 #' @export
 #'
 credit_packages <- function(fns = NULL,
-                            extra_pkgs = NULL,
+                            pkgs_vec_manual = NULL,
                             output_dir = NULL,
                             print_bibTeX = TRUE,
                             print_tex_citation_string = TRUE,
@@ -31,14 +31,14 @@ credit_packages <- function(fns = NULL,
 
 #fns <- list.files(path = "../../../Nextcloud/Hedvigs_academia/2024/emergent_interface/Emergent_interface_Hedvig/", pattern = "*.[R|r]$", full.names = T, recursive = F)
 #    output_dir = "."
-#    extra_pkgs = NULL
+#    pkgs_vec_manual = NULL
 # verbose = TRUE
 #  compare_loaded_with_used = TRUE
   #  report_most_used_pkgs = TRUE
 #  report_script_with_most_funs = TRUE
 
-if(all(is.null(fns), is.null(extra_pkgs))){
-    stop("Neither fns nor extra_pkgs has been supplied.")
+if(all(is.null(fns), is.null(pkgs_vec_manual))){
+    stop("Neither fns nor pkgs_vec_manual has been supplied.")
 }
 
     if(is.null(output_dir)){
@@ -56,7 +56,7 @@ df <- data.frame("packages" = as.character(),
 
 for(fn in fns){
 
-    if(verbose == TRUE){
+        if(verbose == TRUE){
   cat(paste0("I'm on ", fn, "\n"))
     }
 
@@ -101,8 +101,7 @@ unused_but_loaded <- joined_df %>%
     dplyr::filter(!is.na(loaded)) %>%
     dplyr::distinct(packages)[,1] %>% as.vector()
 
-warning("There are packages that it seems like you're not using, but that are still loaded in the environment. Please note that these could be crucial depdencies of other packages, but they don't contain functions that you are calling directly. Do not remove from loading without careful inspection.\n
-        They are: \n ", unused_but_loaded, "\n If you don't want to check this, set 'compare_loaded_with_used' to FALSE.\n\n" )
+warning("There are packages that it seems like you're not using, but that are still loaded in the environment. Please note that these could be crucial depdencies of other packages, but they don't contain functions that you are calling directly. Do not remove from loading without careful inspection. They loaded but seemingly not used packages are: \n ", unused_but_loaded, "\n If you don't want to check this, set 'compare_loaded_with_used' to FALSE.\n\n" )
 
 }
 
@@ -129,7 +128,7 @@ print(as.matrix(
 script_with_most_functions [1:5,])
 )
 }
-    }
+
 
 
 if("" %in% df$packages & verbose == TRUE){
@@ -140,17 +139,17 @@ if("" %in% df$packages & verbose == TRUE){
 
   warning("There were some functions that couldn't be matched to packages. This could be because the package isn't loaded in this session. Run requirements.R or similar and run the function again. Another possible cause is that the functions don't belong to packages at all but were defined elsewhere. The functions that cannot be matched to packages are:.\n ", not_matched, "\n\n" )
 
-
+}
   }
 
-      if(is.null(fns) & !is.null(extra_pkgs)){
-        pkgs_to_cite <- extra_pkgs %>% unique()
+      if(is.null(fns) & !is.null(pkgs_vec_manual)){
+        pkgs_to_cite <- pkgs_vec_manual %>% unique()
             }
-    if(!is.null(fns) & !is.null(extra_pkgs)){
-        pkgs_to_cite <- unique(c(used_packages$packages, extra_pkgs))
+    if(!is.null(fns) & !is.null(pkgs_vec_manual)){
+        pkgs_to_cite <- unique(c(used_packages$packages, pkgs_vec_manual))
     }
 
-    if(!is.null(fns) & is.null(extra_pkgs)){
+    if(!is.null(fns) & is.null(pkgs_vec_manual)){
         pkgs_to_cite <- unique(c(used_packages$packages))
     }
 
@@ -159,12 +158,12 @@ if(print_bibTeX == TRUE){
 
     output_fn <- paste0(output_dir, "/used_pkgs.bib")
 
-    knitr::write_bib(as.character(pkgs_to_cite), file = output_fn)
+    knitr::write_bib(as.character(pkgs_to_cite), file = output_fn, tweak = T)
 
-readLines(output_fn) %>%
-  stringr::str_replace_all("\\&", "\\\\&") %>% #sorting out issues with ampersand
-  stringr::str_replace_all("\\\\\\\\&", "\\\\&") %>%
-    writeLines(output_fn)
+#readLines(output_fn) %>% View()
+#  stringr::str_replace_all("\\&", "\\\\&") %>% #sorting out issues with ampersand
+#  stringr::str_replace_all("\\\\\\\\&", "\\\\&") %>%
+#    writeLines(output_fn)
 
 ##adding in citation for R itself
 
@@ -182,7 +181,8 @@ if(verbose == TRUE){
 
 cat(paste0(
         "There were ", length(pkgs_to_cite)
-, " packages to cite.\n" ))
+, " packages to cite. They are:\n" ))
+        print(pkgs_to_cite)
 
 cat(paste0("Wrote ", output_fn, ".\n"))
     }
@@ -207,6 +207,12 @@ if(verbose == TRUE){
 }
 
 }
+
+#    install.packages("pkgsearch")
+#    library(pkgsearch)
+#    pkg_info <- pkgsearch::cran_package("dplyr", version = "1.1.4")
+#    pkg_info$`Date/Publication`
+
 
     pkgs_to_cite_df <- utils::installed.packages()[pkgs_to_cite, "Version"] %>%
         as.data.frame() %>%
@@ -272,6 +278,10 @@ if(verbose == TRUE){
         funs <- utils::find(df[i,1])
         df[i,2] <- paste0(funs, collapse = ";")
     }
+
+
+
+
 
     return(df)
 }

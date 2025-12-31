@@ -7,7 +7,7 @@
 #' @export
 
 
-CLarbor_from_dep_matrix_known_root <- function(dep_matrix = NULL root){
+CLarbor_from_dep_matrix_known_root <- function(dep_matrix = NULL, root){
   source("chuliu.R") #This script contains the Chu-Liu/Edmonds algorithm. There are also functions in the optrees package that does this (msArborEdmonds()), but in this case this one is better because it's more transperent and more talky. It takes a long time to run, so verobosity is preferable.
 
 

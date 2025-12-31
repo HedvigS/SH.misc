@@ -22,13 +22,17 @@ Imports:
     data.table,
     dplyr,
     fs,
+    GGally,
     ggplot2,
     infotheo,
     knitr,
     magrittr,
+    maps,
     purrr,
+    randomcoloR,
     reader,
     readr,
+    scales,
     stringr,
     tibble,
     tidyr,
@@ -37,6 +41,7 @@ Imports:
     xtable
 Suggests:
     assertthat,
+    caper,
     phangorn,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

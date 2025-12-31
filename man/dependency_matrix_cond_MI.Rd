@@ -2,7 +2,7 @@
 % Please edit documentation in R/CLarbor_dependency_matrix_cond_MI.R
 \name{dependency_matrix_cond_MI}
 \alias{dependency_matrix_cond_MI}
-\title{Creates the complete dependency graph of features, optionally taking into account groupings of observations}
+\title{Creates the complete dependency graph of the features, optionally taking into account groupings of observations}
 \usage{
 dependency_matrix_cond_MI(
   value_df,
@@ -10,12 +10,12 @@ dependency_matrix_cond_MI(
 )
 }
 \arguments{
-\item{value_df}{data-frame where the rows are observations and the columns features. The first column needs to contain a unique identifier for each observation. The name of the first column is irrelevant.}
+\item{value_df}{data-frame where the rows are observations and the columns features. The first column needs to contain a unique identified for each observation. The name of the first column is irrelevant.}
 
-\item{obs_group_df}{data-frame where the rows are observations and the columns contain meta-data on the observations, such as regions, families etc that group the observations meaningfully. The first column needs to contain a unique identifier for each observation. The name of the first column is irrelevant.}
+\item{obs_group_df}{data-frame where the rows are observations and the columns contain meta-data on the observations, such as regions, families etc that group the observations meaningfully. The first column needs to contain a unique identified for each observation. The name of the first column is irrelevant.}
 }
 \description{
-Creates the complete dependency graph of features, optionally taking into account groupings of observations
+Creates the complete dependency graph of the features, optionally taking into account groupings of observations
 }
 \note{
 We would like to thank Harald Hammarström for his invaluable guidance and support in the creation of these functions. See Hammarström, H., & O’Connor, L. (2013). Dependency-sensitive typological distance. In Approaches to measuring linguistic differences. De Gruyter.

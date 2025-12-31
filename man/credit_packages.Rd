@@ -6,7 +6,7 @@
 \usage{
 credit_packages(
   fns = NULL,
-  extra_pkgs = NULL,
+  pkgs_vec_manual = NULL,
   output_dir = NULL,
   print_bibTeX = TRUE,
   print_tex_citation_string = TRUE,
@@ -21,7 +21,7 @@ credit_packages(
 \arguments{
 \item{fns}{character vector of file-names to R-scripts to read in.}
 
-\item{extra_pkgs}{character vector. Names of R-packages, either instead of fns or in addition to it. Sometimes some packages are missed when searching through the scripts, if you add their names here they'll be included in the output despite this.}
+\item{pkgs_vec_manual}{character vector. Names of R-packages, either instead of fns or in addition to it. Sometimes some packages are missed when searching through the scripts, if you add their names here they'll be included in the output despite this. You can also set fns to NULL and only use this argument to generate the references etc.citation}
 
 \item{output_dir}{character vector. Name of directory to print bibTeX file and citation-keys. Necessary if print_bibTeX == TRUE and/or print_tex_citation_string == TRUE.}
 
