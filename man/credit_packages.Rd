@@ -15,6 +15,7 @@ credit_packages(
   print_LaTeX_table = TRUE,
   print_tsv = TRUE,
   report_script_with_most_funs = TRUE,
+  exclude_base = TRUE,
   verbose = TRUE
 )
 }
@@ -38,6 +39,8 @@ credit_packages(
 \item{print_tsv}{logical. If TRUE, a table of packages will be printed to a tsv-file in the output_dir, with a column for version loaded.}
 
 \item{report_script_with_most_funs}{logical. If TRUE, the function will report which script has the most function calls to the terminal.}
+
+\item{exclude_base}{logical. If TRUE, base packages ("compiler" ,  "graphics" ,  "tools" ,     "rstudioapi" ,"utils"  ,    "grDevices",  "stats" ,  "datasets" ,  "methods"  ,  "base") are excluded.}
 
 \item{verbose}{logical. If TRUE, the function will be more talkative.}
 }

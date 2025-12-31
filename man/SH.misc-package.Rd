@@ -21,7 +21,7 @@ Useful links:
 
 Authors:
 \itemize{
-  \item Siva sivak.au@gmail.com Kalyan (\href{https://orcid.org/0000-0002-6302-6641}{ORCID})
+  \item Siva Kalyan \email{sivak.au@gmail.com} (\href{https://orcid.org/0000-0002-6302-6641}{ORCID})
 }
 
 }

@@ -18,8 +18,6 @@ Depends:
 Imports:
     ape,
     bib2df,
-    caper,
-    data.table,
     dplyr,
     fs,
     GGally,
@@ -27,7 +25,6 @@ Imports:
     infotheo,
     knitr,
     magrittr,
-    maps,
     purrr,
     randomcoloR,
     reader,
