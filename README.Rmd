@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 # SH.misc
 
 <!-- badges: start -->
+[![R-CMD-check](https://github.com/HedvigS/SH.misc/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/HedvigS/SH.misc/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 This is a repos for functions often used by Siva Kalyan and Hedvig Skirgård. They mainly concern linguistic data manipulation and related convenient functions to academic research.

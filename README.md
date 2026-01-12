@@ -5,6 +5,7 @@
 
 <!-- badges: start -->
 
+[![R-CMD-check](https://github.com/HedvigS/SH.misc/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/HedvigS/SH.misc/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 This is a repos for functions often used by Siva Kalyan and Hedvig
@@ -35,20 +36,6 @@ This is a basic example which shows you how to solve a common problem:
 
 ``` r
 library(SH.misc)
-#> Warning: replacing previous import 'data.table::first' by 'dplyr::first' when
-#> loading 'SH.misc'
-#> Warning: replacing previous import 'ape::where' by 'dplyr::where' when loading
-#> 'SH.misc'
-#> Warning: replacing previous import 'data.table::last' by 'dplyr::last' when
-#> loading 'SH.misc'
-#> Warning: replacing previous import 'data.table::between' by 'dplyr::between'
-#> when loading 'SH.misc'
-#> Warning: replacing previous import 'magrittr::set_names' by 'purrr::set_names'
-#> when loading 'SH.misc'
-#> Warning: replacing previous import 'data.table::transpose' by
-#> 'purrr::transpose' when loading 'SH.misc'
-#> Warning: replacing previous import 'magrittr::extract' by 'tidyr::extract' when
-#> loading 'SH.misc'
 ## basic example code
 ```
 
