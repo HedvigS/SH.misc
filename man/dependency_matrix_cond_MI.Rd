@@ -2,7 +2,7 @@
 % Please edit documentation in R/CLarbor_dependency_matrix_cond_MI.R
 \name{dependency_matrix_cond_MI}
 \alias{dependency_matrix_cond_MI}
-\title{Creates the complete dependency graph of the features, optionally taking into account groupings of observations}
+\title{Create a matrix of directional dependencies between pairs of features}
 \usage{
 dependency_matrix_cond_MI(
   value_df,
@@ -10,16 +10,55 @@ dependency_matrix_cond_MI(
 )
 }
 \arguments{
-\item{value_df}{data-frame where the rows are observations and the columns features. The first column needs to contain a unique identified for each observation. The name of the first column is irrelevant.}
+\item{value_df}{Data frame where the rows are observations and the (second
+and subsequent) columns are features. The first column needs to contain a
+unique identifier for each observation, but the name of this column is
+irrelevant. The remaining columns should all be discrete, as they will be
+converted into factors.}
 
-\item{obs_group_df}{data-frame where the rows are observations and the columns contain meta-data on the observations, such as regions, families etc that group the observations meaningfully. The first column needs to contain a unique identified for each observation. The name of the first column is irrelevant.}
+\item{obs_group_df}{Optional data frame where the rows are observations and
+the (second and subsequent) columns contain metadata on the observations
+(such as regions, families etc.) that group the observations meaningfully.
+The first column needs to contain a unique identifier for each observation,
+but the name of this column is irrelevant. The identifiers in this data
+frame should be the same as the ones in \code{value_df}.
+
+The default value of this argument is a data frame whose first column is
+the same as that of \code{value_df}, and whose second column is an unvarying
+"null"; conditioning by this column is equivalent to not conditioning at
+all.}
+}
+\value{
+A square matrix whose side length is equal to the number of features
+in \code{value_df} and whose values give the strength of the dependency between
+each (ordered) pair of features.
 }
 \description{
-Creates the complete dependency graph of the features, optionally taking into account groupings of observations
+Computes a directional measure of dependency between every pair of features
+in a dataset, optionally controlling for one or more grouping variables.
+Features are assumed to be discrete.
 }
-\note{
-We would like to thank Harald Hammarström for his invaluable guidance and support in the creation of these functions. See Hammarström, H., & O’Connor, L. (2013). Dependency-sensitive typological distance. In Approaches to measuring linguistic differences. De Gruyter.
+\details{
+Following Hammarström & O'Connor (2013: 337), we measure the strength of the
+dependency from \eqn{A} to \eqn{B} by computing how precisely feature \eqn{B}
+can be predicted from the value of feature \eqn{A}. We do this by measuring
+
+\deqn{\frac{MI(A,B)}{H(B)},}
+
+where \eqn{MI(A,B)} is the mutual information of \eqn{A} and \eqn{B}, and
+\eqn{H(B)} is the Shannon entropy of \eqn{B}. This is a value that ranges from
+\eqn{0} (\eqn{A} is of no use in predicting \eqn{B}) to \eqn{1} (\eqn{A} perfectly predicts \eqn{B}).
+We allow the user to specify one or more grouping variables (typically
+language family, area, etc.) which are then combined into a single grouping
+variable \eqn{C}. In this case, we compute dependency strength as
+
+\deqn{\frac{MI(A,B|C)}{H(B|C)}.}
+
+In either case, we use \code{\link[infotheo:condinformation]{infotheo::condinformation()}} for (conditional) mutual
+information, and \code{\link[infotheo:condentropy]{infotheo::condentropy()}} for (conditional) entropy.
 }
-\author{
-Siva Kalyan and Hedvig Skirgård
+\references{
+Hammarström, H., & O’Connor, L. (2013). Dependency-sensitive
+typological distance. In Lars Borin & Anju Saxena (eds.) Approaches to
+measuring linguistic differences. De Gruyter.
 }
