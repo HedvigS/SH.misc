@@ -2,15 +2,30 @@
 % Please edit documentation in R/CLarbor_chuliu.R
 \name{chuliu}
 \alias{chuliu}
-\title{Title}
+\title{Find the minimum spanning arborescence of a weighted graph, given a root node}
 \usage{
 chuliu(G, root)
 }
 \arguments{
-\item{G}{}
+\item{G}{An \code{igraph} weighted graph.}
 
-\item{root}{}
+\item{root}{An integer giving the index of the root node.}
+}
+\value{
+An \code{igraph} tree giving the minimum spanning arborescence of \code{G}
+with the root at index \code{root}.
 }
 \description{
-Title
+Applies the Chu-Liu/Edmonds algorithm, as described in Georgiadis (2003), to
+find the minimum spanning arborescence of a weighted graph, given a root
+node.
+}
+\details{
+This seems to work more reliably than the \code{getMinimumArborescence()} function
+from the \code{optrees} package, which anyway is no longer available from CRAN.
+}
+\references{
+Georgiadis, L. (2003). Arborescence optimization problems
+solvable by Edmonds’ algorithm. Theoretical Computer Science, 301(1-3),
+427-437.
 }
