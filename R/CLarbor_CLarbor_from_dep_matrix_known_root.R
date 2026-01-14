@@ -1,17 +1,33 @@
-#' Prunes the dependency graph according to the Chu-Liu/Edmonds algorithm given a particular node as the root.
-#' @param dep_matrix the output of the function dependency_matrix_cond_MI()
-#' @param roor .
-#' @author Siva Kalyan and Hedvig Skirgård
-#' @value
-#' @note We would like to thank Harald Hammarström for his invaluable guidance and support in the creation of these functions. See Hammarström, H., & O’Connor, L. (2013). Dependency-sensitive typological distance. In Approaches to measuring linguistic differences. De Gruyter.
+#' Find the maximum spanning arborescence over a graph of feature dependencies,
+#' given a root node
+#'
+#' Prunes a dependency graph according to the Chu-Liu/Edmonds algorithm given a
+#' particular node as the root.
+#'
+#' @param dep_matrix A square numeric matrix of pairwise dependency strengths,
+#'   output by [dependency_matrix_cond_MI()].
+#' @param root An integer giving the index of the root node. Must be between 1
+#'   and the number of rows/columns of `dep_matrix`.
+#' @returns A list with two elements:
+#'
+#'   * `tree`: An `igraph` tree representing the maximum spanning arborescence
+#'   over the dependency graph defined by `dep_matrix`, with the root at the
+#'   node with index `root`.
+#'   * `redundant`: The average percentage of the entropy of each node that is
+#'   accounted for by its incoming dependency.
+#' @references Hammarström, H., & O’Connor, L. (2013). Dependency-sensitive
+#'   typological distance. In Lars Borin & Anju Saxena (eds.) Approaches to
+#'   measuring linguistic differences. De Gruyter.
+#' @seealso [CLarbor_from_dep_matrix_check_all_roots()] for a version that
+#'   checks all possible roots and returns the result with the highest
+#'   `redundant` value.
 #' @export
-
 
 CLarbor_from_dep_matrix_known_root <- function(dep_matrix = NULL, root){
   source("chuliu.R") #This script contains the Chu-Liu/Edmonds algorithm. There are also functions in the optrees package that does this (msArborEdmonds()), but in this case this one is better because it's more transperent and more talky. It takes a long time to run, so verobosity is preferable.
 
 
-    if(dep_matrix == NULL){
+    if(is.null(dep_matrix)){
         stop("No dependency matrix supplied.")
     }
 
