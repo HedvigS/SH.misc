@@ -45,7 +45,7 @@
 #'   typological distance. In Lars Borin & Anju Saxena (eds.) Approaches to
 #'   measuring linguistic differences. De Gruyter.
 #' @export
-#' 
+
 dependency_matrix_cond_MI <- function(value_df, 
                                       obs_group_df = tibble(rowname = value_df[[1]],
                                                             external_variables_united = "null")){
