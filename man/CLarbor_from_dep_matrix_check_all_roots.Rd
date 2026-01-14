@@ -3,21 +3,36 @@
 %   R/CLarbor_CLarbor_from_dep_matrix_check_all_roots.R
 \name{CLarbor_from_dep_matrix_check_all_roots}
 \alias{CLarbor_from_dep_matrix_check_all_roots}
-\title{Applies the function CLarbor::from_dep_matrix_known_root to each node in the graph, then evaluates which one was indeed the best root.}
+\title{Find the maximum spanning arborescence over a graph of feature dependencies}
 \usage{
 CLarbor_from_dep_matrix_check_all_roots(dep_matrix = NULL, return.all = FALSE)
 }
 \arguments{
-\item{dep_matrix}{the output of the function dependency_matrix_cond_MI()}
+\item{dep_matrix}{A square numeric matrix of pairwise dependency strengths,
+output by \code{\link[=dependency_matrix_cond_MI]{dependency_matrix_cond_MI()}}.}
 
-\item{return.all}{logical. If TRUE, all possible trees/forests are returend. If FALSE, only the best is returned. Defaults to FALSE.}
+\item{return.all}{A logical value indicating whether to return all possible
+trees/forests, or just the best one. Defaults to FALSE.}
+}
+\value{
+A list consisting of up to three elements:
+\itemize{
+\item \code{all.arbors}: The full set of maximum spanning arborescences, one for each
+possible root node. Only returned when \code{return.all} is TRUE.
+\item \code{best.arbor}: The optimal maximum spanning arborescence among all possible
+choices of root node, as determined by the \code{redundant} attribute of the
+output of \code{\link[=CLarbor_from_dep_matrix_known_root]{CLarbor_from_dep_matrix_known_root()}}.
+\item \code{root}: The index of the optimal root node.
+}
 }
 \description{
-Applies the function CLarbor::from_dep_matrix_known_root to each node in the graph, then evaluates which one was indeed the best root.
+Applies the function \code{\link[=CLarbor_from_dep_matrix_known_root]{CLarbor_from_dep_matrix_known_root()}} over every
+possible choice of root, and returns either the best result or all results.
+If multiple cores are available on the user's device, the function is applied
+in parallel over different roots.
 }
-\note{
-We would like to thank Harald Hammarström for his invaluable guidance and support in the creation of these functions. See Hammarström, H., & O’Connor, L. (2013). Dependency-sensitive typological distance. In Approaches to measuring linguistic differences. De Gruyter.
-}
-\author{
-Siva Kalyan and Hedvig Skirgård
+\references{
+Hammarström, H., & O’Connor, L. (2013). Dependency-sensitive
+typological distance. In Lars Borin & Anju Saxena (eds.) Approaches to
+measuring linguistic differences. De Gruyter.
 }

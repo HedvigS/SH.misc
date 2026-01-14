@@ -20,6 +20,8 @@ Imports:
     bib2df,
     dplyr,
     fs,
+    furrr,
+    future,
     GGally,
     ggplot2,
     igraph,
