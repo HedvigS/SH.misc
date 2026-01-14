@@ -1,3 +1,13 @@
+#' Title
+#'
+#' @param G 
+#' @param root 
+#'
+#' @returns
+#' @import igraph
+#' @export
+#'
+#' @examples
 chuliu <- function (G, root){
   Gh <- G
   Gh[,root] <- NA
