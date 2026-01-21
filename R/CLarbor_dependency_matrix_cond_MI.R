@@ -32,23 +32,28 @@
 #'   (such as regions, families etc.) that group the observations meaningfully.
 #'   The first column needs to contain a unique identifier for each observation,
 #'   but the name of this column is irrelevant. The identifiers in this data
-#'   frame should be the same as the ones in `value_df`.
+#'   frame should be the same as the ones in `value_df`, should not be missing
+#'   and nor duplicated.
 #'
-#'   The default value of this argument is a data frame whose first column is
-#'   the same as that of `value_df`, and whose second column is an unvarying
-#'   "null"; conditioning by this column is equivalent to not conditioning at
-#'   all.
+#'   The default value of this argument NULL, in which case a dummy-dataframe is
+#'   created with the first column of IDs from value_df and where all 
+#'   observations share one external variable which is NA for all rows - in 
+#'   other words there is not external variable to group the observations (no 
+#'   areas, families etc); conditioning by this column is equivalent to not 
+#'   conditioning at all.
 #' @returns A square matrix whose side length is equal to the number of features
 #'   in `value_df` and whose values give the strength of the dependency between
 #'   each (ordered) pair of features.
+#'   @note do not name any variables in value_df or  obs_group_df "ID", this 
+#'   colname is used internally.
 #' @references Hammarström, H., & O’Connor, L. (2013). Dependency-sensitive
 #'   typological distance. In Lars Borin & Anju Saxena (eds.) Approaches to
 #'   measuring linguistic differences. De Gruyter.
 #' @export
 
 dependency_matrix_cond_MI <- function(value_df, 
-                                      obs_group_df = tibble(rowname = value_df[[1]],
-                                                            external_variables_united = "null")){
+                                      obs_group_df = NULL){
+  
   #This function expects 2 dataframes, one with the observations as rows and traits as columns
   #and the ID for the observations as the first column on the df,
   #the second df should also have the exact same IDs as the first df in the first column,
@@ -57,15 +62,42 @@ dependency_matrix_cond_MI <- function(value_df,
   
   #this package contains the functions for computing conditional mutual information and entropy
   
-  #Check if there are any observations that have missing IDs.
-  if (sum(is.na(obs_group_df)) > 0) {
+  #Check if there are any observations that have missing data for the external variables.
+  if (!is.null(obs_group_df)  & sum(is.na(obs_group_df)) > 0) {
     stop("There is missing data in your dataframe for external variables. Please make sure that all rows have complete entries.")
+  }
+  
+  if(is.null(obs_group_df)){
+  obs_group_df = data.frame(ID = value_df[[1]],
+                        external_variables_united =NA)
+  }
+  
+  if(any(colnames(value_df[,-1]) %in% c("ID"))|
+              any(colnames(obs_group_df[,-1])  %in% c("ID"))){
+    stop("There are columns in value_df and/or obs_group_df with the name ID (ignoring the first column). This will cause problems, please rename.")
+                }
+  
+  
+  #Check if there are any observations that have missing IDs.
+  if (sum(is.na(obs_group_df[,1])) > 0) {
+    stop("There is missing data in obs_group_df for the first column (the column with observation IDs).")
+  }
+  
+  #Check if there are any observations that have missing IDs.
+  if (sum(is.na(value_df[,1])) > 0) {
+    stop("There is missing data in value_df for the first column (the column with observation IDs).")
   }
   
   #Check if any observation IDs are duplicates
   number_of_duplicates <- sum(duplicated(value_df[,1]))
   if (number_of_duplicates > 0){
-    stop("Not all of the IDs are unique! Please recheck.")
+    stop("Not all of the IDs are unique in value_df! Please recheck.")
+  }
+  
+  #Check if any observation IDs are duplicates
+  number_of_duplicates <- sum(duplicated(obs_group_df[,1]))
+  if (number_of_duplicates > 0){
+    stop("Not all of the IDs are unique in obs_group_df! Please recheck.")
   }
   
   #Check if the observation IDs in both dataframes are the same
@@ -86,7 +118,6 @@ dependency_matrix_cond_MI <- function(value_df,
       rename_at(1, function(x){"rowname"}) %>%
       tibble::column_to_rownames()
   }
-  
   
   value_df_for_depfun <- make_features_factors(value_df) %>%
     tibble::rownames_to_column("ID")
@@ -131,3 +162,4 @@ dependency_matrix_cond_MI <- function(value_df,
   
   dependencys
 }
+
