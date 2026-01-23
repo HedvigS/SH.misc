@@ -53,8 +53,7 @@ coloured_SPLOM <- function(df = df,
     n <- (length(names(df_without_id_vars)) * (length(names(df_without_id_vars)) - 1)) / 2
 
     if(all(pair_colors == "default")){
-        stop("randomcoloR disabled due to package incompatabilities")
-        #pair_colors <- randomcoloR::distinctColorPalette(k  = n)
+        pair_colors <- randomcoloR::distinctColorPalette(k  = n)
     }
 
     # Herringbone logic
