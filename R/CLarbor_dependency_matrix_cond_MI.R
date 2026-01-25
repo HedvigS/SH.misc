@@ -11,11 +11,12 @@
 #' \deqn{\frac{MI(A,B)}{H(B)},}
 #'
 #' where \eqn{MI(A,B)} is the mutual information of \eqn{A} and \eqn{B}, and
-#' \eqn{H(B)} is the Shannon entropy of \eqn{B}. This is a value that ranges from
-#' \eqn{0} (\eqn{A} is of no use in predicting \eqn{B}) to \eqn{1} (\eqn{A} perfectly predicts \eqn{B}).
-#' We allow the user to specify one or more grouping variables (typically
-#' language family, area, etc.) which are then combined into a single grouping
-#' variable \eqn{C}. In this case, we compute dependency strength as
+#' \eqn{H(B)} is the Shannon entropy of \eqn{B}. This is a value that ranges
+#' from \eqn{0} (\eqn{A} is of no use in predicting \eqn{B}) to \eqn{1} (\eqn{A}
+#' perfectly predicts \eqn{B}). We allow the user to specify one or more
+#' grouping variables (typically language family, area, etc.) which are then
+#' combined into a single grouping variable \eqn{C}. In this case, we compute
+#' dependency strength as
 #'
 #' \deqn{\frac{MI(A,B|C)}{H(B|C)}.}
 #'
@@ -32,20 +33,19 @@
 #'   (such as regions, families etc.) that group the observations meaningfully.
 #'   The first column needs to contain a unique identifier for each observation,
 #'   but the name of this column is irrelevant. The identifiers in this data
-#'   frame should be the same as the ones in `value_df`, should not be missing
-#'   and nor duplicated.
+#'   frame should be the same as the ones in `value_df`, and should not be
+#'   missing or duplicated.
 #'
-#'   The default value of this argument NULL, in which case a dummy-dataframe is
-#'   created with the first column of IDs from value_df and where all 
-#'   observations share one external variable which is NA for all rows - in 
-#'   other words there is not external variable to group the observations (no 
-#'   areas, families etc); conditioning by this column is equivalent to not 
-#'   conditioning at all.
+#'   The default value of this argument is NULL, in which case a dummy dataframe
+#'   is created where the first column consists of the IDs from `value_df`, and
+#'   there is only one grouping variable, which is NA for all rows; in other
+#'   words, there is effectively no grouping variable, since conditioning by
+#'   this column is equivalent to not conditioning at all.
 #' @returns A square matrix whose side length is equal to the number of features
 #'   in `value_df` and whose values give the strength of the dependency between
 #'   each (ordered) pair of features.
-#'   @note do not name any variables in value_df or  obs_group_df "ID", this 
-#'   colname is used internally.
+#' @note Do not name any of the variables in `value_df` or `obs_group_df` "ID",
+#'   as this column name is used internally.
 #' @references Hammarström, H., & O’Connor, L. (2013). Dependency-sensitive
 #'   typological distance. In Lars Borin & Anju Saxena (eds.) Approaches to
 #'   measuring linguistic differences. De Gruyter.
