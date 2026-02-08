@@ -105,7 +105,7 @@ dependency_matrix_cond_MI <- function(value_df,
     stop("External variables IDs and value IDs are not the same! Please recheck.")
   }
   
-  #Comibine all the columns with external variables into one column
+  #Combine all the columns with external variables into one column
   obs_group_df_united <- obs_group_df %>%
     tidyr::unite("external_variables_united", -1)
   
@@ -139,7 +139,8 @@ dependency_matrix_cond_MI <- function(value_df,
       1
     } else {
       d <- dfs_joined %>%
-        dplyr::select(Var1 = x, Var2 = y, external_variables_united) %>%
+        dplyr::select(Var1 = tidyselect::all_of(x), 
+                      Var2 = tidyselect::all_of(y), external_variables_united) %>%
         tidyr::drop_na()
       infotheo::condinformation(d$Var1, d$Var2, d$external_variables_united)/infotheo::condentropy(d$Var2, d$external_variables_united)
     }
@@ -148,10 +149,10 @@ dependency_matrix_cond_MI <- function(value_df,
   #This does the dependency computation for all pairs of features, all while showing a nifty progress bar.
   cat("Computing dependency matrix:\n")
   value_vars_grid <- expand.grid(value_vars, value_vars, stringsAsFactors = F)
-  pb <- dplyr::progress_estimated(nrow(value_vars_grid))
+  pb <- progress::progress_bar$new(total = nrow(value_vars_grid))
   dependencys_vector <- purrr::map2_dbl(value_vars_grid$Var1, value_vars_grid$Var2,
                                         function(x,y){
-                                          pb$tick()$print()
+                                          pb$tick()
                                           depfun(x,y)
                                         })
   dependencys <- matrix(pmax(dependencys_vector,0), nrow = length(value_vars), ncol = length(value_vars), dimnames = list(value_vars, value_vars))

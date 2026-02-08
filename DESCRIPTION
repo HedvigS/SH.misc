@@ -28,6 +28,7 @@ Imports:
     infotheo,
     knitr,
     magrittr,
+    progress,
     purrr,
     randomcoloR,
     reader,
@@ -36,6 +37,7 @@ Imports:
     stringr,
     tibble,
     tidyr,
+    tidyselect,
     usethis,
     utils,
     xtable
