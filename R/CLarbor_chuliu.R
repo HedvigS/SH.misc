@@ -31,15 +31,15 @@ chuliu <- function (G, root){
   Gh[is.na(Gh)] <- 0
   Ghg <- graph_from_adjacency_matrix(Gh,weighted = T,diag = F)
   Thg <- graph_from_adjacency_matrix(Th,weighted = T,diag = F)
-  stages <- list(list(nodes = 1:vcount(Ghg), arcs = cbind(get.edgelist(Ghg),E(Ghg)$weight), super.node = NULL, matches = cbind(1:vcount(Ghg),1:vcount(Ghg))))
+  stages <- list(list(nodes = 1:vcount(Ghg), arcs = cbind(as_edgelist(Ghg),E(Ghg)$weight), super.node = NULL, matches = cbind(1:vcount(Ghg),1:vcount(Ghg))))
   trees <- list(Thg)
-  while (!is.dag(Thg)){
+  while (!is_dag(Thg)){
     message(paste("Stage",length(stages)))
     Thgzc <- searchZeroCycle(1:vcount(Thg),cbind(get.edgelist(Thg),E(Thg)$weight))
     cc <- compactCycle(1:vcount(Ghg),cbind(get.edgelist(Ghg),E(Ghg)$weight),Thgzc$cycle.nodes)
     stages[[length(stages) + 1]] <- cc
     Ghg <- graph_from_edgelist(cc$arcs[,1:2, drop = F])
-    Ghg <- set.edge.attribute(Ghg, "weight", value = cc$arcs[,3, drop = F])
+    Ghg <- set_edge_attr(Ghg, "weight", value = cc$arcs[,3])
     Thg <- incoming(Ghg)
     trees[[length(trees) + 1]] <- Thg
   }
@@ -88,7 +88,7 @@ chuliu <- function (G, root){
 }
 
 incoming <- function(g){
-  gadj <- as.matrix(get.adjacency(g,attr = "weight"))
+  gadj <- as.matrix(as_adjacency_matrix(g, attr = "weight", names = F, sparse = F))
   diag(gadj) <- 1
   minrows <- max.col(t(1-gadj))
   tadj <- matrix(0,nrow(gadj),ncol(gadj))
