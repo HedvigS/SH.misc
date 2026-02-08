@@ -29,7 +29,8 @@ CLarbor_from_dep_matrix_check_all_roots <- function(dep_matrix = NULL, return.al
   
   value_vars <- colnames(dep_matrix)
   future::plan(future::multicore)
-  all_CLarbor_results <- furrr::future_map(value_vars, function(r){CLarbor_from_dep_matrix_known_root(dep_matrix, r)}) %>%
+  all_CLarbor_results <- furrr::future_map(value_vars, function(r){CLarbor_from_dep_matrix_known_root(dep_matrix, r)},
+                                           .options = furrr::furrr_options(seed = T)) %>%
     purrr::transpose()
   future::plan(future::sequential)
   which_best_CLarbor <- which.max(unlist(all_CLarbor_results$redundant))
