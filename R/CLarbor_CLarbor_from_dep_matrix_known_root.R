@@ -45,7 +45,7 @@ CLarbor_from_dep_matrix_known_root <- function(dep_matrix = NULL, root){
   dimnames(G) <- NULL
   CLarbor <- chuliu(G,root)
   V(CLarbor)$name <- value_vars
-  pruned_weights <- data.frame(feature = get.edgelist(CLarbor)[,2],weight = E(CLarbor)$weight) %>%
+  pruned_weights <- data.frame(feature = as_edgelist(CLarbor)[,2],weight = E(CLarbor)$weight) %>%
     distinct()
   redundant_percentage<- 100*sum(1 - pruned_weights$weight)/length(pruned_weights$weight)
   message(paste("Your dataset contains", round(redundant_percentage,2), "% mass that can be considered as redundant."))
