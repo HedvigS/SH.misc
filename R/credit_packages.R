@@ -105,7 +105,7 @@ credit_packages <- function(fns = NULL,
         dplyr::filter(!is.na(loaded)) %>%
         dplyr::pull(packages) %>% unique() %>% na.omit()
       
-      warning("There are packages that it seems like you're not using, but that are still loaded in the environment. Please note that these could be crucial depdencies of other packages, but they don't contain functions that you are calling directly. Do not remove from loading without careful inspection. They loaded but seemingly not used packages are: ", paste0( unused_but_loaded, collapse = ", " ), "\n If you don't want to check this, set 'compare_loaded_with_used' to FALSE.\n\n" )
+      warning("There are packages that it seems like you're not using, but that are still loaded in the environment. Please note that these could be crucial depdencies of other packages, but they don't contain functions that you are calling directly. Do not remove from loading without careful inspection. The loaded but seemingly not used packages are: ", paste0( unused_but_loaded, collapse = ", " ), "\n If you don't want to check this, set 'compare_loaded_with_used' to FALSE.\n\n" )
       
     }
     
