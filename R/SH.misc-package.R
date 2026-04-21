@@ -4,4 +4,4 @@
 ## usethis namespace: start
 ## usethis namespace: end
 
-utils::globalVariables(c("packages", "used", "loaded", "script", "."))
+utils::globalVariables(c("packages", "used", "loaded", "script", ".", "external_variables_united"))

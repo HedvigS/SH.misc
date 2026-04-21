@@ -2,21 +2,39 @@
 % Please edit documentation in R/CLarbor_CLarbor_from_dep_matrix_known_root.R
 \name{CLarbor_from_dep_matrix_known_root}
 \alias{CLarbor_from_dep_matrix_known_root}
-\title{Prunes the dependency graph according to the Chu-Liu/Edmonds algorithm given a particular node as the root.}
+\title{Find the maximum spanning arborescence over a graph of feature dependencies,
+given a root node}
 \usage{
 CLarbor_from_dep_matrix_known_root(dep_matrix = NULL, root)
 }
 \arguments{
-\item{dep_matrix}{the output of the function dependency_matrix_cond_MI()}
+\item{dep_matrix}{A square numeric matrix of pairwise dependency strengths,
+output by \code{\link[=dependency_matrix_cond_MI]{dependency_matrix_cond_MI()}}.}
 
-\item{roor}{.}
+\item{root}{An integer giving the index of the root node. Must be between 1
+and the number of rows/columns of \code{dep_matrix}.}
+}
+\value{
+A list with two elements:
+\itemize{
+\item \code{tree}: An \code{igraph} tree representing the maximum spanning arborescence
+over the dependency graph defined by \code{dep_matrix}, with the root at the
+node with index \code{root}.
+\item \code{redundant}: The average percentage of the entropy of each node that is
+accounted for by its incoming dependency.
+}
 }
 \description{
-Prunes the dependency graph according to the Chu-Liu/Edmonds algorithm given a particular node as the root.
+Prunes a dependency graph according to the Chu-Liu/Edmonds algorithm given a
+particular node as the root.
 }
-\note{
-We would like to thank Harald Hammarström for his invaluable guidance and support in the creation of these functions. See Hammarström, H., & O’Connor, L. (2013). Dependency-sensitive typological distance. In Approaches to measuring linguistic differences. De Gruyter.
+\references{
+Hammarström, H., & O’Connor, L. (2013). Dependency-sensitive
+typological distance. In Lars Borin & Anju Saxena (eds.) Approaches to
+measuring linguistic differences. De Gruyter.
 }
-\author{
-Siva Kalyan and Hedvig Skirgård
+\seealso{
+\code{\link[=CLarbor_from_dep_matrix_check_all_roots]{CLarbor_from_dep_matrix_check_all_roots()}} for a version that
+checks all possible roots and returns the result with the highest
+\code{redundant} value.
 }
