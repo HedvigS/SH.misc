@@ -5,7 +5,7 @@
 #' @param cor_test_method_exact logical. Is inherited by cor.test, see exact argument for cor.test for more details. In case of spearman and ties, it is recommended to set this argument to FALSE. Defaults to TRUE.
 #' @param adjust_pvalues_method character vector of length 1. Adjustment of p-values for multiple comparisons issues. Inherited by stats::p.adjust(). Defaults to "none", in which case no p-values are adjusted. Options are: "holm", "hochberg", "hommel", "bonferroni", "BH", "BY",   "fdr" and "none". See stats::p.adjust() for more details.
 #' @param adjust_pvalues_for_pairs character vector. If adjust_pvalues_method is set to a value besides "none", then p-values adjustment is carried out for the specific pairs listed in this argument (combined with "_"). If there are two variables in the dataset called "Var1" and "Var2" and the p-values should be adjusted for this pair, this argument should be c("Var1_Var2").
-#' @param pair_colors character vector. If set to "default", then we use randomcoloR::distinctColorPalette to find a set of distinct colors for the number of plots needed. This argument can also be set to a vector of hex-codes for colors (e.g. c("#E55679", "#5FE3B6", "#D447A0")) and then those specific colors will be used.
+#' @param pair_colors named character vector. This argument can also be set to a vector of hex-codes for colors (e.g. c("#E55679", "#5FE3B6", "#D447A0")) and then those specific colors will be used.
 #' @param col_pairs_constraint characther vector. Default =  "None". Name of column whereby to identify secondary id, see Note for details.
 #' @param cols_to_constrain characther vector. Default =  "None".Name(s) of column(s) to which the secondary id constraint apply in order to not double-count.
 #' @param hist_label_size  numeric. Default =  3, Font size of the text at the diagonal histograms
@@ -15,7 +15,6 @@
 #' @param herringbone = logical. Default = FALSE. Wether or not to color the SPLOM according to a "herringbone" pattern or unique colors for each pair.
 #' @param cor_value_cut_off description
 #' @param alpha_point numeric. Default = 0.8. Transperency of points in scatterplots.
-#' @importFrom randomcoloR distinctColorPalette
 #' @importFrom dplyr select distinct all_of
 #' @importFrom scales alpha
 #' @importFrom ggplot2 ggplot geom_point theme_minimal theme element_rect element_blank geom_rect aes annotate xlim ylim theme_void geom_histogram theme_minimal as_label
@@ -32,7 +31,7 @@ coloured_SPLOM <- function(df = df,
                            cor_test_method_exact = TRUE, 
                            adjust_pvalues_method = "none", # "holm", "hochberg", "hommel", "bonferroni", "BH", "BY",   "fdr", "none"
                            adjust_pvalues_for_pairs = c(),
-                           pair_colors = "default", #if set to default, then we use randomcoloR::distinctColorPalette to find a set of distinct colors for the number of plots needed. This argument can also be set to a vector of hex-codes for colors (e.g. c("#E55679", "#5FE3B6", "#D447A0")).
+                           pair_colors = "", 
                            col_pairs_to_constraint = "None",
                            col_pairs_constraint = "None",
                            hist_label_size  = 3, #font size of the text at the diagonal
@@ -52,9 +51,8 @@ coloured_SPLOM <- function(df = df,
   
   n <- (length(names(df_without_id_vars)) * (length(names(df_without_id_vars)) - 1)) / 2
   
-  if(all(pair_colors == "default")){
-    stop("randomcoloR disabled due to package incompatabilities")
-    #pair_colors <- randomcoloR::distinctColorPalette(k  = n)
+  if(all(pair_colors == "")){
+    stop("Color vector missing.")
   }
   
   # Herringbone logic
@@ -62,11 +60,11 @@ coloured_SPLOM <- function(df = df,
     n_herring <- length(names(df_without_id_vars))
     pair_colors_herring <- c()
     for(i in 1:n_herring){
-      spec <- rep(x = pair_colors[i], n_herring-i)
+      var <- names(df_without_id_vars)[i]
+      spec <- rep(x = pair_colors[var], n_herring-i)
       pair_colors_herring <- c(pair_colors_herring, spec)
     }
-    pair_colors_hist <- pair_colors
-    names(pair_colors_hist) <- names(df_without_id_vars)
+    pair_colors_hist <- pair_colors[names(df_without_id_vars)]
     pair_colors <- pair_colors_herring
   }
   
