@@ -7,6 +7,7 @@ h_install <- function(pkg,
                       version = NULL, 
                       repos = "http://cran.us.r-project.org", 
                       dependencies = NA,
+                      unload = TRUE,
                       upgrade = "never",
                       lib = .libPaths()[1]
 ){
@@ -91,10 +92,11 @@ h_install <- function(pkg,
   # FIX: try not unloading for now.
   #in order to avoid issues with installing other packages and their depedencies clashing, let's unload the package from the environment
   
-   if(pkg %in% loadedNamespaces()){
-     unloadNamespace(pkg)
-  
-   }
+  if(unload == TRUE){
+    if(pkg %in% loadedNamespaces()){
+      unloadNamespace(pkg)
+    }
+  }
   
   installed_pkgs <- as.data.frame(installed.packages(lib.loc = lib)[, c("Package", "Version"), drop = FALSE])
   
@@ -125,7 +127,7 @@ h_load <- function(pkg,
 h_install_from_binary <- function(pkg, dir, 
                                   lib = .libPaths()[1]){
   
-
+  
   #  pkg <- "data.table_1.17.8"
   package <- sub("_.*$", "", pkg)
   
