@@ -12,8 +12,15 @@
 #' @param report_script_with_most_funs logical. If TRUE, the function will report which script has the most function calls to the terminal.
 #' @param pkgs_to_ignore character vector. If not NULL, the packages listed will be ignored from the process.
 #' @param verbose logical. If TRUE, the function will be more talkative.
-#' @return Data-frame of all used functions. Depending on the arguments, the function also returns output to the terminal and/or files written to the output directory.
-#' @author Hedvig Skirgård
+#' @return A named list with the following elements:
+#'   \itemize{
+#'     \item \code{used_functions} data frame of all functions found and their packages and scripts.
+#'     \item \code{packages_to_cite} character vector of all package names to cite.
+#'     \item \code{packages_versions} data frame of package names and their installed versions.
+#'     \item \code{bib} character vector of the bibTeX file contents, if print_bibTeX is TRUE, else NULL.
+#'     \item \code{citation_keys} character vector of TeX citation keys, if print_tex_citation_string is TRUE, else NULL.
+#'   }
+#' @author Hedvig Skirgard
 #' @note In cases where it is not clear which specific package a function is from several packages are returned for that function. This can for example be the case with filter(). This function uses an adapted version of 'list.functions.in.file' from the package NC.misc. That function was written by Nicholas Cooper 'njcooper (at) gmx.co.uk'. The adjustment consist of removing unique() such that all instances are reported.
 #' @export
 #'
@@ -27,7 +34,7 @@ credit_packages <- function(fns = NULL,
                             print_LaTeX_table = TRUE,
                             print_tsv = TRUE,
                             report_script_with_most_funs = TRUE,
-                            pkgs_to_ignore = c("compiler" ,  "graphics" ,  "tools" ,     "rstudioapi" ,"utils"  ,    "grDevices",  "stats" ,  "datasets" ,  "methods"  ,  "base"),
+                            pkgs_to_ignore = c("compiler", "graphics", "tools", "rstudioapi", "utils", "grDevices", "stats", "datasets", "methods", "base"),
                             verbose = TRUE
 ){
   
@@ -40,6 +47,11 @@ credit_packages <- function(fns = NULL,
   }else{
     if(!dir.exists(output_dir)){dir.create(output_dir)}
   }
+  
+  # initialise output objects
+  bib_content      <- NULL
+  citation_keys    <- NULL
+  used_functions   <- NULL
   
   if(!is.null(fns)){
     
@@ -55,13 +67,23 @@ credit_packages <- function(fns = NULL,
       }
       
       #fn <- fns[3]
-      x <- .list.functions.in.file_SH(filename = fn) |>
-        dplyr::mutate(packages = stringr::str_replace_all(packages, "package:", "")) |>
-        dplyr::mutate(packages = stringr::str_replace_all(packages, "c\\(", "")) |>
-        dplyr::mutate(packages = stringr::str_replace_all(packages, "\\)", "")) |>
-        dplyr::mutate(packages = stringr::str_replace_all(packages, "\\\"", "")) |>
-        dplyr::mutate(packages = stringr::str_replace_all(packages, "character\\(0", "")) |>
-        dplyr::mutate(packages = stringr::str_split(packages, ";")) |>
+      raw <- .list.functions.in.file_SH(filename = fn)
+      
+      # Skip files with no function calls
+      if(nrow(raw) == 0){
+        if(verbose == TRUE){
+          cat(paste0("  No function calls found in ", fn, " - skipping.\n"))
+        }
+        next
+      }
+      
+      x <- raw |>
+        dplyr::mutate(packages = stringr::str_replace_all(.data[["packages"]], "package:", "")) |>
+        dplyr::mutate(packages = stringr::str_replace_all(.data[["packages"]], "c\\$", "")) |>
+        dplyr::mutate(packages = stringr::str_replace_all(.data[["packages"]], "\\$", "")) |>
+        dplyr::mutate(packages = stringr::str_replace_all(.data[["packages"]], "\\\"", "")) |>
+        dplyr::mutate(packages = stringr::str_replace_all(.data[["packages"]], "character\\$0", "")) |>
+        dplyr::mutate(packages = stringr::str_split(.data[["packages"]], ";")) |>
         tidyr::unnest(cols = "packages") |>
         dplyr::mutate(script = fn)
       
@@ -69,23 +91,25 @@ credit_packages <- function(fns = NULL,
     }
     
     if(!is.null(pkgs_to_ignore)){
-      df <- df |> 
-        dplyr::filter(!`packages` %in% pkgs_to_ignore)
+      df <- df |>
+        dplyr::filter(!.data[["packages"]] %in% pkgs_to_ignore)
     }
     
     used_packages <- df |>
       dplyr::mutate(used = "TRUE") |>
-      filter(packages != "") |>
-      filter(!is.na(packages) )
-    
+      dplyr::filter(.data[["packages"]] != "") |>
+      dplyr::filter(!is.na(.data[["packages"]]))
     
     # removing instances where a package wasn't found
     used_packages$packages <- trimws(used_packages$packages)
     
     used_packages <- used_packages |>
-      dplyr::filter(packages != ".GlobalEnv") |>
-      dplyr::filter(!is.na(packages)|
-                      packages != "")
+      dplyr::filter(.data[["packages"]] != ".GlobalEnv") |>
+      dplyr::filter(!is.na(.data[["packages"]]) |
+                      .data[["packages"]] != "")
+    
+    # store used_functions for output
+    used_functions <- used_packages
     
     #df with loaded packages
     if(compare_loaded_with_used == TRUE){
@@ -94,27 +118,27 @@ credit_packages <- function(fns = NULL,
         dplyr::mutate(loaded = "TRUE")
       
       if(!is.null(pkgs_to_ignore)){
-        loaded_packages <- loaded_packages |> 
-          dplyr::filter(!`packages` %in% pkgs_to_ignore)
+        loaded_packages <- loaded_packages |>
+          dplyr::filter(!.data[["packages"]] %in% pkgs_to_ignore)
       }
       
       joined_df <- dplyr::full_join(used_packages, loaded_packages, by = "packages")
       
       unused_but_loaded <- joined_df |>
-        dplyr::filter(is.na(used)) |>
-        dplyr::filter(!is.na(loaded)) |>
-        dplyr::pull(packages) |> unique() |> na.omit()
+        dplyr::filter(is.na(.data[["used"]])) |>
+        dplyr::filter(!is.na(.data[["loaded"]])) |>
+        dplyr::pull("packages") |> unique() |> na.omit()
       
-      warning("There are packages that it seems like you're not using, but that are still loaded in the environment. Please note that these could be crucial depdencies of other packages, but they don't contain functions that you are calling directly. Do not remove from loading without careful inspection. The loaded but seemingly not used packages are: ", paste0( unused_but_loaded, collapse = ", " ), "\n If you don't want to check this, set 'compare_loaded_with_used' to FALSE.\n\n" )
+      warning("There are packages that it seems like you're not using, but that are still loaded in the environment. Please note that these could be crucial depdencies of other packages, but they don't contain functions that you are calling directly. Do not remove from loading without careful inspection. The loaded but seemingly not used packages are: ", paste0(unused_but_loaded, collapse = ", "), "\n If you don't want to check this, set 'compare_loaded_with_used' to FALSE.\n\n")
       
     }
     
-    if(report_most_used_pkgs  == TRUE){
+    if(report_most_used_pkgs == TRUE){
       
       most_used <- used_packages |>
-        dplyr::group_by(packages) |>
-        dplyr::summarise(n = n()) |>
-        dplyr::arrange(desc(n))
+        dplyr::group_by(.data[["packages"]]) |>
+        dplyr::summarise(n = dplyr::n()) |>
+        dplyr::arrange(dplyr::desc(.data[["n"]]))
       
       cat("The top 5 packages you used the most:\n ")
       print(as.matrix(
@@ -122,27 +146,26 @@ credit_packages <- function(fns = NULL,
     }
     
     if(report_script_with_most_funs == TRUE){
-      script_with_most_functions <-  used_packages |>
-        dplyr::group_by(script) |>
-        dplyr::summarise(n = n()) |>
-        dplyr::arrange(desc(n))
+      script_with_most_functions <- used_packages |>
+        dplyr::group_by(.data[["script"]]) |>
+        dplyr::summarise(n = dplyr::n()) |>
+        dplyr::arrange(dplyr::desc(.data[["n"]]))
       
       cat("The top 5 scripts which use the most functions:\n ")
       print(as.matrix(
-        script_with_most_functions [1:5,])
+        script_with_most_functions[1:5,])
       )
     }
     
-    
-    
     if("" %in% df$packages & verbose == TRUE){
       
-      not_matched <-   df |>
-        filter(packages == ""|is.na(packages)) |>
-        dplyr::pull(`functions`) |> unique() |> na.omit()
+      not_matched <- df |>
+        dplyr::filter(.data[["packages"]] == "" | is.na(.data[["packages"]])) |>
+        dplyr::pull("functions") |>
+        unique() |>
+        na.omit()
       
-      warning("There were some functions that couldn't be matched to packages. This could be because the package isn't loaded in this session. Run requirements.R or similar and run the function again. Another possible cause is that the functions don't belong to packages at all but were defined elsewhere. The functions that cannot be matched to packages are: ", paste0(not_matched, collapse = ", "), "\n" )
-      
+      warning("There were some functions that couldn't be matched to packages. This could be because the package isn't loaded in this session. Run requirements.R or similar and run the function again. Another possible cause is that the functions don't belong to packages at all but were defined elsewhere. The functions that cannot be matched to packages are: ", paste0(not_matched, collapse = ", "), "\n")
       
     }
   }
@@ -158,10 +181,9 @@ credit_packages <- function(fns = NULL,
     pkgs_to_cite <- unique(c(used_packages$packages))
   }
   
-  
   if(print_bibTeX == TRUE){
     
-    output_fn <- paste0(output_dir, "/used_pkgs.bib")
+    output_fn <- file.path(output_dir, "used_pkgs.bib")
     
     knitr::write_bib(as.character(pkgs_to_cite), file = output_fn, tweak = T)
     
@@ -174,10 +196,9 @@ credit_packages <- function(fns = NULL,
       bib
     )
     
-    bib <-   bib |>
+    bib <- bib |>
       stringr::str_replace_all("\\&", "\\\\&") |> #sorting out issues with ampersand
       stringr::str_replace_all("\\\\\\\\&", "\\\\&")
-    
     
     writeLines(bib, output_fn)
     
@@ -193,11 +214,14 @@ credit_packages <- function(fns = NULL,
     bib <- c(bib, R_bib_string)
     bib |> writeLines(output_fn)
     
+    # store bib content for output
+    bib_content <- bib
+    
     if(verbose == TRUE){
       
       cat(paste0(
-        "There were ", length(pkgs_to_cite)
-        , " packages to cite. They are:\n" ))
+        "There were ", length(pkgs_to_cite),
+        " packages to cite. They are:\n"))
       print(pkgs_to_cite)
       
       cat(paste0("Wrote ", output_fn, ".\n"))
@@ -215,11 +239,13 @@ credit_packages <- function(fns = NULL,
     
     vec <- paste0("\\citet{", bibdf$BIBTEXKEY, "}")
     
-    fPaste(vec)   |>
-      writeLines(con = paste0(output_dir, "/citation_keys.txt"))
+    citation_keys <- fPaste(vec)
+    
+    citation_keys |>
+      writeLines(con = file.path(output_dir, "citation_keys.txt"))
     
     if(verbose == TRUE){
-      cat(paste0("Wrote ", output_dir, "/citation_keys.txt") )
+      cat(paste0("Wrote ", file.path(output_dir, "citation_keys.txt")))
     }
     
   }
@@ -229,30 +255,29 @@ credit_packages <- function(fns = NULL,
   #    pkg_info <- pkgsearch::cran_package("dplyr", version = "1.1.4")
   #    pkg_info$`Date/Publication`
   
+  pkgs_to_cite_df <- data.frame(
+    Package = pkgs_to_cite,
+    Version = utils::installed.packages()[pkgs_to_cite, "Version"],
+    stringsAsFactors = FALSE,
+    row.names = NULL
+  )
   
-  pkgs_to_cite_df <- utils::installed.packages()[pkgs_to_cite, "Version"] |>
-    as.data.frame() |>
-    tibble::rownames_to_column("Package") |>
-    dplyr::rename("Version" = "." )
-  
-  if(print_tsv == TRUE ){
+  if(print_tsv == TRUE){
     pkgs_to_cite_df |>
-      readr::write_tsv(paste0(output_dir,"/pkgs_versions_table.tsv"))
+      readr::write_tsv(file.path(output_dir, "pkgs_versions_table.tsv"))
     
     if(verbose == TRUE){
-      cat(paste0("Wrote ", output_dir,"/pkgs_versions_table.tsv \n"))
+      cat(paste0("Wrote ", file.path(output_dir, "pkgs_versions_table.tsv"), "\n"))
     }
-    
-    
     
   }
   
-  if(print_LaTeX_table == TRUE ){
+  if(print_LaTeX_table == TRUE){
     
-    fn_out = paste0(output_dir, "/used_packages_table.tex")
+    fn_out = file.path(output_dir, "used_packages_table.tex")
     cap <- "Table of R-packages used."
     lbl <- "r_package_table"
-    align <- c("r","p{2.5cm}","p{2.5cm}")
+    align <- c("r", "p{2.5cm}", "p{2.5cm}")
     
     pkgs_to_cite_df |>
       xtable::xtable(caption = cap, label = lbl,
@@ -260,18 +285,26 @@ credit_packages <- function(fns = NULL,
       xtable::print.xtable(file = fn_out,
                            sanitize.colnames.function = function(x){x},
                            sanitize.text.function = function(x){x},
-                           include.rownames = FALSE, math.style.negative = F,tabular.environment = "longtable",
+                           include.rownames = FALSE, math.style.negative = F, tabular.environment = "longtable",
                            booktabs = TRUE, floating = F)
     
     if(verbose == TRUE){
-      cat(paste0("Wrote ", fn_out, "\n" ))
+      cat(paste0("Wrote ", fn_out, "\n"))
     }
-    
     
   }
   
+  # return a list of all outputs
+  invisible(list(
+    used_functions   = used_functions,
+    packages_to_cite = pkgs_to_cite,
+    packages_versions = pkgs_to_cite_df,
+    bib              = bib_content,
+    citation_keys    = citation_keys
+  ))
   
 }
+
 
 .list.functions.in.file_SH <- function(filename) {
   if (!file.exists(filename)) {
@@ -303,4 +336,3 @@ credit_packages <- function(fns = NULL,
   
   return(df)
 }
-
