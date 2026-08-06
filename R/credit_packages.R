@@ -255,11 +255,17 @@ credit_packages <- function(fns = NULL,
   #    pkg_info <- pkgsearch::cran_package("dplyr", version = "1.1.4")
   #    pkg_info$`Date/Publication`
   
+  installed <- utils::installed.packages()
+  
   pkgs_to_cite_df <- data.frame(
     Package = pkgs_to_cite,
-    Version = utils::installed.packages()[pkgs_to_cite, "Version"],
+    Version = ifelse(
+      pkgs_to_cite %in% rownames(installed),
+      installed[pkgs_to_cite, "Version"],
+      NA_character_
+    ),
     stringsAsFactors = FALSE,
-    row.names = NULL
+    row.names        = NULL
   )
   
   if(print_tsv == TRUE){
@@ -273,20 +279,28 @@ credit_packages <- function(fns = NULL,
   }
   
   if(print_LaTeX_table == TRUE){
+    fn_out <- file.path(output_dir, "used_packages_table.tex")
+    cap    <- "Table of R-packages used."
+    lbl    <- "r_package_table"
+    align  <- c("r", "p{2.5cm}", "p{2.5cm}")
     
-    fn_out = file.path(output_dir, "used_packages_table.tex")
-    cap <- "Table of R-packages used."
-    lbl <- "r_package_table"
-    align <- c("r", "p{2.5cm}", "p{2.5cm}")
+    # capture the LaTeX table as a character vector for the output list
+    latex_table <- utils::capture.output(
+      pkgs_to_cite_df |>
+        xtable::xtable(caption = cap, label = lbl, align = align) |>
+        xtable::print.xtable(
+          sanitize.colnames.function = function(x){x},
+          sanitize.text.function     = function(x){x},
+          include.rownames           = FALSE,
+          math.style.negative        = FALSE,
+          tabular.environment        = "longtable",
+          booktabs                   = TRUE,
+          floating                   = FALSE
+        )
+    )
     
-    pkgs_to_cite_df |>
-      xtable::xtable(caption = cap, label = lbl,
-                     align = align) |>
-      xtable::print.xtable(file = fn_out,
-                           sanitize.colnames.function = function(x){x},
-                           sanitize.text.function = function(x){x},
-                           include.rownames = FALSE, math.style.negative = F, tabular.environment = "longtable",
-                           booktabs = TRUE, floating = F)
+    # write captured content to file
+    writeLines(latex_table, fn_out)
     
     if(verbose == TRUE){
       cat(paste0("Wrote ", fn_out, "\n"))
@@ -296,11 +310,12 @@ credit_packages <- function(fns = NULL,
   
   # return a list of all outputs
   invisible(list(
-    used_functions   = used_functions,
-    packages_to_cite = pkgs_to_cite,
+    used_functions    = used_functions,
+    packages_to_cite  = pkgs_to_cite,
     packages_versions = pkgs_to_cite_df,
-    bib              = bib_content,
-    citation_keys    = citation_keys
+    bib               = bib_content,
+    citation_keys     = citation_keys,
+    latex_table       = latex_table      # added
   ))
   
 }
