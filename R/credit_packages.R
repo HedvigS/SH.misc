@@ -30,10 +30,10 @@ credit_packages <- function(fns = NULL,
                             print_bibTeX = TRUE,
                             print_tex_citation_string = TRUE,
                             compare_loaded_with_used = TRUE,
-                            report_most_used_pkgs = TRUE,
+                            report_most_used_pkgs = FALSE,
                             print_LaTeX_table = TRUE,
                             print_tsv = TRUE,
-                            report_script_with_most_funs = TRUE,
+                            report_script_with_most_funs = FALSE,
                             pkgs_to_ignore = c("compiler", "graphics", "tools", "rstudioapi", "utils", "grDevices", "stats", "datasets", "methods", "base"),
                             verbose = TRUE
 ){
@@ -129,7 +129,8 @@ credit_packages <- function(fns = NULL,
         dplyr::filter(!is.na(.data[["loaded"]])) |>
         dplyr::pull("packages") |> unique() |> na.omit()
       
-      warning("There are packages that it seems like you're not using, but that are still loaded in the environment. Please note that these could be crucial depdencies of other packages, but they don't contain functions that you are calling directly. Do not remove from loading without careful inspection. The loaded but seemingly not used packages are: ", paste0(unused_but_loaded, collapse = ", "), "\n If you don't want to check this, set 'compare_loaded_with_used' to FALSE.\n\n")
+      if(verbose == TRUE){
+      warning("There are packages that it seems like you're not using, but that are still loaded in the environment. Please note that these could be crucial depdencies of other packages, but they don't contain functions that you are calling directly. Do not remove from loading without careful inspection. The loaded but seemingly not used packages are: ", paste0(unused_but_loaded, collapse = ", "), "\n If you don't want to check this, set 'compare_loaded_with_used' to FALSE.\n\n")}
       
     }
     
